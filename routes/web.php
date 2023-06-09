@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BaseAuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/email/verify/{id}/{hash}', [BaseAuthController::class, 'verifyEmail'])->name('verification.verify');

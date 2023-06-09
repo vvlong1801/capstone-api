@@ -13,7 +13,7 @@ trait HasRoles
      * @param int $role
      * @return Attribute
      */
-    private function isRole($role)
+    public function isRole($role)
     {
         // dd($this->account->role == $role);
         return $this->account->role == $role;
