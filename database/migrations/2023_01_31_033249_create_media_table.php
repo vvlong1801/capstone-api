@@ -21,10 +21,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('path');
             $table->unique(['name', 'path']);
-            $table->integer('type')->comment('1: image, 2: icon, 3: gif, 4: video, 5: music');
             $table->string('disk')->comment('0: local, 1: s3, 2: local-tmp, 3: s3-tmp');
             $table->string('conversions_disk')->nullable();
-            $table->string('mime_type')->nullable();
+            $table->string('mime_type');
             $table->unsignedInteger('size')->nullable();
             $table->integer('status')->default(1);
             $table->timestamps();

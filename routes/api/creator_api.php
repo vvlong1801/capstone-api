@@ -19,4 +19,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::middleware('auth:sanctum')->group(function () {
     //=============== Auth ===============
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    //=============== Upload file ===============
+    Route::post('/upload', [MediaController::class, 'upload']);
 });

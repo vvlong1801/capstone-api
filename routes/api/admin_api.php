@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -18,4 +19,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     //=============== Auth ===============
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    //=============== Upload file ===============
+    Route::post('/upload', [MediaController::class, 'upload']);
+    Route::post('/media/create', [MediaController::class, 'create']);
 });
