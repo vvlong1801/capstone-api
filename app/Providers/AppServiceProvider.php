@@ -12,11 +12,11 @@ class AppServiceProvider extends ServiceProvider
         Services\Interfaces\AuthServiceInterface::class => Services\AuthService::class,
         Services\Interfaces\MediaServiceInterface::class => Services\MediaServices\LocalService::class,
         // Services\Interfaces\MediaServiceInterface::class => Services\MediaServices\S3Service::class,
-        // Services\Interfaces\ExerciseServiceInterface::class => Services\ExerciseService::class,
+        Services\Interfaces\MuscleServiceInterface::class => Services\MuscleService::class,
+        Services\Interfaces\EquipmentServiceInterface::class => Services\EquipmentService::class,
+        Services\Interfaces\ExerciseServiceInterface::class => Services\ExerciseService::class,
         // Services\Interfaces\GroupExerciseServiceInterface::class => Services\GroupExerciseService::class,
         // Services\Interfaces\ChallengeServiceInterface::class => Services\ChallengeService::class,
-        // Services\Interfaces\EquipmentServiceInterface::class => Services\EquipmentService::class,
-        // Services\Interfaces\MuscleServiceInterface::class => Services\MuscleService::class,
     ];
     /**
      * Register any application services.

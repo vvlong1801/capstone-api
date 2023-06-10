@@ -44,17 +44,17 @@ class Exercise extends Model
 
     public function image()
     {
-        return $this->morphOne(Media::class, 'mediable')->whereType(TypeMedia::Image);
+        return $this->morphOne(Media::class, 'mediable')->whereImage();
     }
 
     public function gif()
     {
-        return $this->morphOne(Media::class, 'mediable')->whereType(TypeMedia::Gif);
+        return $this->morphOne(Media::class, 'mediable')->whereGif();
     }
 
     public function video()
     {
-        return $this->morphOne(Media::class, 'mediable')->whereType(TypeMedia::Video);
+        return $this->morphOne(Media::class, 'mediable')->whereVideo();
     }
 
     public function muscles()

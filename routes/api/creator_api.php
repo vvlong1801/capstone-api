@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Creator\AuthController;
+use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
