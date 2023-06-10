@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\TypeMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,12 +18,12 @@ class Equipment extends Model
 
     public function image()
     {
-        return $this->morphOne(Media::class, 'mediable')->whereType(TypeMedia::Image);
+        return $this->morphOne(Media::class, 'mediable')->whereImage();
     }
 
 
     public function icon()
     {
-        return $this->morphOne(Media::class, 'mediable')->whereType(TypeMedia::Icon);
+        return $this->morphOne(Media::class, 'mediable')->whereIcon();
     }
 }

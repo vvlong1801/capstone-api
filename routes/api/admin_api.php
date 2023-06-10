@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\EquipmentController;
+use App\Http\Controllers\Admin\ExerciseController;
+use App\Http\Controllers\Admin\MuscleController;
 use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;
 /*
@@ -23,4 +26,15 @@ Route::middleware('auth:sanctum')->group(function () {
     //=============== Upload file ===============
     Route::post('/upload', [MediaController::class, 'upload']);
     Route::post('/media/create', [MediaController::class, 'create']);
+
+    //=============== Muscles ===============
+    Route::apiResource('/muscles', MuscleController::class)->except('show');
+
+    //=============== Equipments ===============
+    Route::apiResource('/equipments', EquipmentController::class)->except('show');
+
+    //=============== Exercise ===============
+    Route::get('/exercises/group_tags', [ExerciseController::class, 'getGroupTags']);
+    Route::post('/exercises/search', [ExerciseController::class, 'search']);
+    Route::apiResource('/exercises', ExerciseController::class);
 });
