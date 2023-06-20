@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\EquipmentController;
 use App\Http\Controllers\Admin\ExerciseController;
 use App\Http\Controllers\Admin\MuscleController;
+use App\Http\Controllers\Creator\ChallengeController;
 use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;
 /*
@@ -37,4 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/exercises/group_tags', [ExerciseController::class, 'getGroupTags']);
     Route::post('/exercises/search', [ExerciseController::class, 'search']);
     Route::apiResource('/exercises', ExerciseController::class);
+
+    //=============== Challenge ===============
+    Route::apiResource('/challenges', ChallengeController::class);
 });

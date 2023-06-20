@@ -6,7 +6,6 @@ use App\Enums\Role;
 use App\Http\Controllers\BaseAuthController;
 use App\Http\Requests\Creator\Auth\LoginRequest;
 use App\Http\Requests\WorkoutUser\Auth\RegisterRequest;
-
 use App\Services\Interfaces\UserServiceInterface;
 use Illuminate\Auth\Events\Registered;
 

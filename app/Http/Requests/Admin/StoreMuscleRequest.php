@@ -25,8 +25,8 @@ class StoreMuscleRequest extends FormRequest
             'name' => 'required|unique:muscles,name,'.$this->route('muscle').',id',
             'image.filename' => 'required',
             'image.path' => 'required',
-            'icon.filename' => 'exists:media,name',
-            'icon.path' => 'exists:media,path',
+            'icon.filename' => '',
+            'icon.path' => '',
             'description' => '',
         ];
     }

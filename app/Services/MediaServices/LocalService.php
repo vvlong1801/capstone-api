@@ -75,10 +75,9 @@ class LocalService extends BaseService implements MediaServiceInterface
     {
         // select disk of media in database
         $media = Media::wherePath($file['path'])->whereName($file['filename'])->first();
-
         // if existed media in local disk then return
         // if existed media in temp disk then create
-        if ($media->disk === 'local') {
+        if ($media?->disk === 'local') {
             return;
         } else {
             return $this->createMedia($file, $collection);
