@@ -85,7 +85,7 @@ class S3Service extends BaseService implements MediaServiceInterface
 
         // if existed media in local disk then return
         // if existed media in temp disk then create
-        if ($media->disk === 's3') {
+        if ($media?->disk === 's3') {
             return;
         } else {
             return $this->createMedia($data, $collection);

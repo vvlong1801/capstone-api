@@ -60,11 +60,10 @@ class MuscleController extends Controller
         $payload = $request->validated();
         $image = \Arr::get($payload, 'image');
         $icon = \Arr::get($payload, 'icon', false);
-        
+
         try {
             $payload['image'] = $mediaService->updateMedia($image, MediaCollection::Muscle);
             $payload['icon'] = $icon ? $mediaService->updateMedia($icon, MediaCollection::Muscle) : null;
-
             $this->muscleService->updateMuscle($id, $payload);
             return $this->responseNoContent('update muscle is success!');
         } catch (\Throwable $th) {

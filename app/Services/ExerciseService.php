@@ -12,7 +12,7 @@ class ExerciseService extends BaseService implements ExerciseServiceInterface
 {
     public function getExercises()
     {
-        return Exercise::with(['groupTags', 'createdBy'])->get();
+        return Exercise::with(['groupTags', 'createdBy', 'image'])->get();
     }
 
     public function getGroupTags()

@@ -16,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
         Services\Interfaces\EquipmentServiceInterface::class => Services\EquipmentService::class,
         Services\Interfaces\ExerciseServiceInterface::class => Services\ExerciseService::class,
         // Services\Interfaces\GroupExerciseServiceInterface::class => Services\GroupExerciseService::class,
-        // Services\Interfaces\ChallengeServiceInterface::class => Services\ChallengeService::class,
+        Services\Interfaces\ChallengeServiceInterface::class => Services\ChallengeService::class,
     ];
     /**
      * Register any application services.
@@ -39,5 +39,6 @@ class AppServiceProvider extends ServiceProvider
         foreach ($this->bindingServices as $interface => $service) {
             app()->bind($interface, $service);
         }
+        app()->bind(TestServiceInterface::class, TestService::class);
     }
 }
