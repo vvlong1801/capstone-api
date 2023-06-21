@@ -14,7 +14,7 @@ trait Helper
         return array_map(fn ($case) => $case->name, self::cases());
     }
 
-    public static function fromValue(string $value)
+    public static function fromValue($value)
     {
         foreach (self::cases() as $case) {
             if ($case->value == $value) {

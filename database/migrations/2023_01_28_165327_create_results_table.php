@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('results', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('item_id');
-            $table->foreign('item_id')->references('id')->on('exercise_workout_session');
+            $table->foreign('item_id')->references('id')->on('exercise_phase_session');
             $table->double('actual_value');
             $table->double('calories_burned')->nullable();
             $table->time('duration')->nullable();

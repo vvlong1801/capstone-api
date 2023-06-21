@@ -45,6 +45,6 @@ class ChallengePhase extends Model
 
     public function sessions()
     {
-        return $this->hasMany(WorkoutSession::class);
+        return $this->hasMany(PhaseSession::class);
     }
 }

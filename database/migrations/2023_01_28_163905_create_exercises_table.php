@@ -19,9 +19,11 @@ return new class extends Migration
             $table->string('name');
             $table->integer('level');
             $table->integer('type')->default(1);
+            $table->string('requirement_unit');
+            $table->string('requirement_initial');
             $table->unsignedBigInteger('created_by');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
-            $table->integer('evaluate_method')->comment('0: repitition, 1: time-based, 2: distance-based');
+            // $table->integer('evaluate_method')->comment('0: repitition, 1: time-based, 2: distance-based');
             $table->string('description')->nullable();
             $table->foreignId('equipment_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();

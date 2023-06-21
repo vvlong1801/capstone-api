@@ -22,7 +22,8 @@ class ExerciseResource extends JsonResource
             "created_by" =>  $this->createdBy->name,
             "group_tags" => TagResource::collection($this->groupTags),
 
-            "evaluate_method" => $this->evaluate_method,
+            "requirement_unit" => $this->requirement_unit,
+            "requirement_initial" => $this->requirement_initial,
             "equipment" => new EquipmentResource(
                 $this->whenLoaded('equipment')
             ),

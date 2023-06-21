@@ -14,14 +14,15 @@ return new class extends Migration
         Schema::create('challenge_phases', function (Blueprint $table) {
             $table->id();
             $table->foreignId('challenge_id')->constrained()->cascadeOnDelete();
+            $table->string('name')->nullable();
             $table->integer('order');
             $table->integer('level');
-            $table->string('name')->nullable();
-            $table->integer('min_rank')->default(0)->comment('0: beginner, 1: middle, 2:senior, 3:pro');
-            $table->integer('max_rank')->default(4)->comment('0: beginner, 1: middle, 2:senior, 3:pro');
-            $table->integer('count_sessions');
-            $table->integer('active_days');
-            $table->integer('rest_days');
+            $table->integer('total_days');
+            $table->string('note')->nullable();
+            // $table->integer('min_rank')->default(0)->comment('0: beginner, 1: middle, 2:senior, 3:pro');
+            // $table->integer('max_rank')->default(4)->comment('0: beginner, 1: middle, 2:senior, 3:pro');
+            // $table->integer('active_days');
+            // $table->integer('rest_days');
             $table->timestamps();
         });
     }

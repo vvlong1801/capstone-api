@@ -17,8 +17,7 @@ class SessionExerciseResource extends JsonResource
         return [
             'exercise' => new ExerciseResource($this->exercise),
             'order' => $this->order,
-            'is_primary' => $this->is_primary,
-            'requirements' => ExerciseRequirementResource::collection($this->requirements),
+            'requirement' => $this->requirement,
         ];
     }
 }

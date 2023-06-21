@@ -22,7 +22,7 @@ class ChallengePhaseResource extends JsonResource
             'count_sessions' => $this->count_sessions,
             'active_days' => $this->active_days,
             'rest_days' => $this->rest_days,
-            'sessions' => WorkoutSessionResource::collection($this->whenLoaded('sessions')),
+            'sessions' => PhaseSessionResource::collection($this->whenLoaded('sessions')),
         ];
     }
 }
