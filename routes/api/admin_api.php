@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\EquipmentController;
 use App\Http\Controllers\Admin\ExerciseController;
 use App\Http\Controllers\Admin\MuscleController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Creator\ChallengeController;
 use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;
@@ -41,4 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=============== Challenge ===============
     Route::apiResource('/challenges', ChallengeController::class);
+
+    //=============== Users ===============
+    Route::get('/users/search/{keyword}', [UserController::class, 'search']);
+    Route::apiResource('/users', UserController::class);
 });

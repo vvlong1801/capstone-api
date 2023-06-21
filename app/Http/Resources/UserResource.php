@@ -2,10 +2,11 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\Role;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ExerciseRequirementResource extends JsonResource
+class UserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,11 +16,10 @@ class ExerciseRequirementResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'param' => $this->param,
-            'param_type' => $this->param_type,
-            'value' => $this->value,
-            'unit' => $this->unit,
-            'order' => $this->order,
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone_number' => $this->phone_number,
+            'role' => $this->account->role->name,
         ];
     }
 }

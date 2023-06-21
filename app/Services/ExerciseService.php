@@ -62,7 +62,7 @@ class ExerciseService extends BaseService implements ExerciseServiceInterface
         \DB::beginTransaction();
         try {
             // insert exercise info
-            $exercise = Exercise::create(\Arr::only($payload, ['name', 'level', 'created_by', 'evaluate_method', 'equipment_id', 'description']));
+            $exercise = Exercise::create(\Arr::only($payload, ['name', 'level', 'created_by', 'requirement_unit', 'requirement_initial', 'equipment_id', 'description']));
             $exercise->muscles()->attach($payload['muscles']);
 
             // insert media of exercise
@@ -90,7 +90,7 @@ class ExerciseService extends BaseService implements ExerciseServiceInterface
             $exercise = Exercise::findOrFail($id);
             $exercise->muscles()->sync(\Arr::get($payload, 'muscles', []));
 
-            $exercise->update(\Arr::only($payload, ['name', 'level', 'created_by', 'evaluate_method', 'equipment_id', 'description']));
+            $exercise->update(\Arr::only($payload, ['name', 'level', 'created_by', 'requirement_unit', 'requirement_initial', 'equipment_id', 'description']));
 
             if ($gif = $payload['gif']) {
                 $exercise->gif()->update($gif->getAttributes());

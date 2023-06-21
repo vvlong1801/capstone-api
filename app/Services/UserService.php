@@ -11,6 +11,21 @@ use Illuminate\Support\Facades\Hash;
 
 class UserService extends BaseService implements UserServiceInterface
 {
+    public function getUsers()
+    {
+        $users = User::with(['account', 'avatar'])->get();
+        return $users;
+    }
+
+    public function searchByEmailOrPhoneNumber(string $payload)
+    {
+        // approximate query on member of challenge that created by auth user
+        //
+
+        // exactly query on member of challenge that created by auth user
+        $users = User::with(['account', 'avatar'])->whereEmail($payload)->orWhere('phone_number', $payload)->get();
+        return $users;
+    }
 
     public function createUserWithRole(array $data, Role $role)
     {

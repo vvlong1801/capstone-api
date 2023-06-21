@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Enums\EvaluateMethod;
 use App\Enums\Level;
+use App\Enums\RequirementUnit;
 use App\Enums\Role;
 use App\Enums\TypeMedia;
 use App\Enums\TypeTag;
@@ -19,19 +19,14 @@ class Exercise extends Model
     protected $guarded = [];
     //=========== convert attribute ============
     //==========================================
+    protected $casts = [
+        "requirement_unit" => RequirementUnit::class,
+    ];
     public function level(): Attribute
     {
         return Attribute::make(
             set: fn ($name) => Level::fromName($name),
             get: fn ($value) => Level::fromValue($value)
-        );
-    }
-
-    public function evaluateMethod(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($name) => EvaluateMethod::fromName($name),
-            get: fn ($value) => EvaluateMethod::fromValue($value),
         );
     }
     //=========== create relationship ==========
@@ -75,7 +70,6 @@ class Exercise extends Model
     public function createdBy()
     {
         $user =  $this->belongsTo(User::class, 'created_by');
-
         if ($user->first()->belongsRoles([Role::admin, Role::creator, Role::superAdmin])) {
             return $user;
         } else {

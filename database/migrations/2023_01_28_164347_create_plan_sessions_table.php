@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('plan_sessions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('plan_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('workout_session_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('phase_session_id')->constrained()->cascadeOnDelete();
             $table->integer('status')->default(1);
             $table->time('duration')->nullable();
             $table->double('calories_burned')->nullable();

@@ -8,7 +8,7 @@ use App\Models\ChallengePhase;
 use App\Models\ChallengeType;
 use App\Models\Exercise;
 use App\Models\SessionExercise;
-use App\Models\WorkoutSession;
+use App\Models\PhaseSession;
 use App\Supports\Helper;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Eloquent\Factories\Sequence;
@@ -30,7 +30,7 @@ class ChallengeSeeder extends Seeder
         foreach ($challenges as $key => $challenge) {
             $exercises = Exercise::factory()->count(20)->state(['created_by' => ($key + 1)])->create();
             $phases = ChallengePhase::factory()->for($challenge)->create();
-            $workoutSessions = WorkoutSession::factory()
+            $PhaseSessions = PhaseSession::factory()
                 ->count(7)->for($phases)
                 ->sequence(fn (Sequence $sequence) => [
                     'order' => $sequence->index
