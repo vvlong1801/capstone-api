@@ -7,6 +7,7 @@ use App\Enums\RoleMemberChallenge;
 use App\Enums\StatusChallenge;
 use App\Enums\TypeChallenge;
 use App\Enums\TypeParticipant;
+use App\Enums\TypeTag;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,30 +23,11 @@ class Challenge extends Model
     protected $casts = [
         'status' => StatusChallenge::class,
         'type' => TypeChallenge::class,
-        // 'released_at' => 'datetime',
-        // 'finished_at' => 'datetime',
-        // 'stopped_at' => 'datetime',
+        'start_at' => 'datetime',
+        'finish_at' => 'datetime',
+        // 'paused_at' => 'datetime',
     ];
 
-    protected function releasedAt(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($value) => \Carbon\Carbon::createFromFormat('d/m/Y H:i:s', $value),
-            get: fn ($value) => \Carbon\Carbon::parse($value)->format('d/m/Y H:i:s'),
-        );
-    }
-    // protected function finishedAt(): Attribute
-    // {
-    //     return Attribute::make(
-    //         set: fn ($value) => \Carbon\Carbon::createFromFormat('d/m/Y H:i:s', $value),
-    //     );
-    // }
-    // protected function stoppedAt(): Attribute
-    // {
-    //     return Attribute::make(
-    //         set: fn ($value) => \Carbon\Carbon::createFromFormat('d/m/Y H:i:s', $value),
-    //     );
-    // }
 
     protected function status(): Attribute
     {
@@ -102,5 +84,15 @@ class Challenge extends Model
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'challenge_tag')->whereType(TypeTag::ChallengeTag);
+    }
+
+    public function invitations()
+    {
+        return $this->hasMany(ChallengeInvitation::class);
     }
 }

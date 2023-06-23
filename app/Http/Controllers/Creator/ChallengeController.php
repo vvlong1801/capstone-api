@@ -36,6 +36,7 @@ class ChallengeController extends Controller
         try {
             $payload['image'] = $mediaService->createMedia($image, MediaCollection::Challenge);
             $payload['created_by'] = $request->user()->id;
+
             $this->challengeService->createChallenge($payload);
 
             return $this->responseNoContent('challenge created');

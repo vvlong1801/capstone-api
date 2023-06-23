@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('phase_sessions', function (Blueprint $table) {
+        Schema::create('challenge_tag', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('challenge_phase_id')->constrained()->cascadeOnDelete();
-            $table->integer('order');
-            $table->string('name')->nullable();
+            $table->foreignId('challenge_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('tag_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('phase_sessions');
+        Schema::dropIfExists('challenge_tag');
     }
 };
