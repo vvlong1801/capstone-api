@@ -74,6 +74,7 @@ class ExerciseService extends BaseService implements ExerciseServiceInterface
             // == if tag_name && type = group_exercise is existed then ignore
             // == if tag_name isn't existed then create
             $ids = Tag::createOrIgnore(TypeTag::GroupExercise, $payload['group_tags']);
+            dd($ids);
             $exercise->groupTags()->attach($ids);
 
             \DB::commit();

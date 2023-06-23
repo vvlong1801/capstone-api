@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('challenge_id')->constrained()->cascadeOnDelete();
             $table->string('name')->nullable();
             $table->integer('order');
-            $table->integer('level');
+            $table->integer('level')->nullable();
             $table->integer('total_days');
             $table->string('note')->nullable();
             // $table->integer('min_rank')->default(0)->comment('0: beginner, 1: middle, 2:senior, 3:pro');

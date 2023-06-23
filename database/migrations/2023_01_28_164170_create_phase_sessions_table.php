@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('challenge_phase_id')->constrained()->cascadeOnDelete();
             $table->integer('order');
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->timestamps();
         });
     }

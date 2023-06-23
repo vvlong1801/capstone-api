@@ -27,7 +27,7 @@ class Challenge extends Model
         // 'stopped_at' => 'datetime',
     ];
 
-    protected function releasedAt(): Attribute
+    protected function startAt(): Attribute
     {
         return Attribute::make(
             set: fn ($value) => \Carbon\Carbon::createFromFormat('d/m/Y H:i:s', $value),

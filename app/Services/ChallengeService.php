@@ -27,20 +27,26 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
 
         \DB::beginTransaction();
         try {
+            // init challenge
             $challenge = new Challenge(\Arr::only($payload, [
-                'name', 'description', 'type', 'max_member',
-                'commit_point', 'participant', 'required_approve',
-                'member_censorship', 'result_censorship',
-                'released_at', 'finished_at', 'created_by'
+                'name', 'description', 'sort_desc', 'max_members',
+                'sort_desc', 'accept_all', 'public',
+                'start_at', 'finish_at', 'created_by'
             ]));
+
             $challenge->status = StatusChallenge::init;
             $challenge->save();
 
+            // save media
             $challenge->image()->save($payload['image']);
 
-            $phases = \Arr::get($payload, 'phases', []);
-
+            // save template
+            $phases = \Arr::get($payload, 'template.phases', []);
             $this->createChallengePhase($challenge, $phases);
+
+            // save invitation
+
+            // send notification to admin
 
             \DB::commit();
         } catch (\Throwable $th) {
@@ -51,36 +57,43 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
 
     private function createChallengePhase(Challenge $challenge, array $payload)
     {
+        //check existed phase
         if (!count($payload)) throw new \Exception("challenge hasn't phases", 1);
 
         foreach ($payload as $index => $data) {
+            // init phase
             $newPhase = new ChallengePhase(\Arr::only($data, [
-                'name', 'level', 'description',
-                'min_rank', 'max_rank', 'active_days', 'rest_days'
+                'name', 'total_days', 'note',
             ]));
             $newPhase->order = $index;
-            $newPhase->count_sessions =
-                count(\Arr::get($data, 'sessions', 0));
             $challenge->phases()->save($newPhase);
 
+            // calculate level
+
+            // add sessions
             $this->createSessions($newPhase, $data['sessions']);
         }
     }
 
     private function createSessions(ChallengePhase $phase, $sessions)
     {
+        // check existed session
         if (!count($sessions)) throw new \Exception("the phase hasn't sessions", 1);
+
         foreach ($sessions as $index => $session) {
+            dd($session);
             //insert session
             $newSession = $phase->sessions()->create(['name' => 'day ' . $index, 'order' => $index]);
             // insert exercises
-            foreach ($session as $key => $exercise) {
+            foreach ($session as $idx => $exercise) {
 
                 $ssExercise = SessionExercise::create([
-                    'order' => $key,
-                    'is_primary' => true,
                     'exercise_id' => $exercise['exercise_id'],
-                    'workout_session_id' => $newSession->id
+                    'phase_session_id' => $newSession->id,
+                    'requirement' => $exercise['requirement'],
+                    'requirement_unit' => $exercise['requirement_unit'],
+                    'order' => $idx,
+                    'alternative_exercise' => false,
                 ]);
 
                 $requires = collect([]);

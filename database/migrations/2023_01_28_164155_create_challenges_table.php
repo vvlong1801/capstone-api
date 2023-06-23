@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreign('created_by')->references('id')->on('users');
             $table->integer('type')->default(1)->comment('1: fixed');
             $table->integer('max_members')->default(-1)->comment('-1: non-limited');
+            $table->integer('level')->nullable();
             // $table->integer('commit_point')->nullable();
             // $table->integer('participant')->default(1)->comment('1: all, 2: group, 3: assign');
             $table->boolean('accept_all')->default(true);

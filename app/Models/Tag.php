@@ -30,8 +30,8 @@ class Tag extends Model
             return $item;
         });
 
+        dd($tags);
         $query->insertOrIgnore($tags);
-
         $result = $query->select('id')
             ->whereIn('name', \Arr::pluck($data, 'name'))->get()
             ->pluck('id')->toArray();
