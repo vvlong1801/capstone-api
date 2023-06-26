@@ -15,9 +15,11 @@ class SessionExerciseResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'exercise' => new ExerciseResource($this->exercise),
+            'name' => $this->exercise->name,
+            'image' => new MediaResource($this->exercise->image),
             'order' => $this->order,
             'requirement' => $this->requirement,
+            'requirement_unit' => $this->requirement_unit
         ];
     }
 }

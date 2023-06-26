@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\ChallengeApprovedEvent;
+use App\Events\NewChallengeEvent;
+use App\Listeners\ReviewChallengeNotification;
+use App\Listeners\SendChallengeInvitationNotification;
+use App\Listeners\SendResultCheckedChallengeEmail;
+use App\Listeners\SendResultCheckedChallengeNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -17,6 +23,14 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        // NewChallengeEvent::class => [
+        //     ReviewChallengeNotification::class,
+        // ],
+        ChallengeApproved::class => [
+            SendResultCheckedChallengeNotification::class,
+            SendResultCheckedChallengeEmail::class,
+            SendChallengeInvitationNotification::class,
         ],
     ];
 

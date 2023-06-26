@@ -2,27 +2,60 @@
 
 namespace App\Services;
 
+use App\Enums\Role;
 use App\Enums\RoleChallenge;
 use App\Enums\StatusChallenge;
 use App\Enums\TypeTag;
+use App\Events\NewChallengeEvent;
 use App\Models\Challenge;
 use App\Models\ChallengePhase;
 use App\Models\SessionExercise;
 use App\Models\Tag;
+use App\Models\User;
+use App\Notifications\NewChallengeNotification;
 use App\Services\Interfaces\ChallengeServiceInterface;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Notification;
 
 class ChallengeService extends BaseService implements ChallengeServiceInterface
 {
     public function getChallenges()
     {
-        return Challenge::with(['image', 'createdBy'])->get();
+        return Challenge::with(['image', 'createdBy', 'tags'])->get();
     }
 
     public function getChallengeById($id)
     {
-        $challenge = Challenge::with(['createdBy', 'image', 'phases', 'phases.sessions', 'phases.sessions.sessionExercises'])->whereId($id)->first();
+        $challenge = Challenge::with(['createdBy', 'image', 'phases', 'phases.sessions', 'phases.sessions.sessionExercises', 'phases.sessions.sessionExercises'])->whereId($id)->first();
         return $challenge;
+    }
+
+    public function getChallengeTags()
+    {
+        return Tag::whereType(TypeTag::ChallengeTag)->get();
+    }
+
+    public function confirmNewChallenge($id, $payload)
+    {
+        // change status
+        Challenge::whereId($id)
+            ->where('status', StatusChallenge::init)->when($payload['approve'], function (QueryBuilder $query) {
+                $query->update(['approved_at' => now(), 'status' => StatusChallenge::waiting]);
+                $query->where('start_at', '<', now())
+                    ->where('finish_at', '>', now())
+                    ->update(['status', StatusChallenge::running]);
+            }, function (QueryBuilder $query) {
+                $query->update(['status' => StatusChallenge::cancel]);
+            });
+            
+        //approve = true
+        //==notify creator
+
+        //==send invitation
+
     }
 
     public function createChallenge(array $payload)
@@ -61,9 +94,14 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
                 return $item;
             });
             $challenge->invitations()->createMany($payload['invitation']);
-            dd('aaaa');
             // send notification to admin
+            $superAdmin = User::with(['account' => function (Builder $query) {
+                $query->where('role', Role::superAdmin);
+            }])->first();
 
+            // event(new NewChallengeEvent($challenge));
+            Notification::send($superAdmin, new NewChallengeNotification($challenge));
+            dd($superAdmin);
             \DB::commit();
         } catch (\Throwable $th) {
             \DB::rollback();

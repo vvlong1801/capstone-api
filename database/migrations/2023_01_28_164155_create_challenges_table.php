@@ -29,7 +29,8 @@ return new class extends Migration
             $table->boolean('public')->default(true);
             // $table->integer('member_censorship')->default(1);
             // $table->integer('result_censorship')->default(1);
-            $table->integer('status')->default(0)->comment('0: init, 1: waiting, 2: active, 3: finish, 4:pending');
+            $table->integer('status')->default(0)->comment('0: init, 1: waiting, 2: running, 3: finish, 4:paused, 5:cancel');
+            $table->dateTime('approved_at')->nullable();
             $table->dateTime('start_at')->nullable();
             $table->dateTime('finish_at')->nullable();
             $table->dateTime('paused_at')->nullable();

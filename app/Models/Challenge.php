@@ -29,14 +29,6 @@ class Challenge extends Model
     ];
 
 
-    protected function status(): Attribute
-    {
-        return Attribute::make(
-            // set: fn ($name) => CommonStatus::fromName(ucfirst($name)),
-            get: fn ($value) => CommonStatus::fromValue($value),
-        );
-    }
-
     protected function type(): Attribute
     {
         return Attribute::make(
