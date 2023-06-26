@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Creator;
 
 use App\Enums\MediaCollection;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ConfirmNewChallengeRequest;
 use App\Http\Requests\Creator\StoreChallengeRequest;
 use App\Http\Resources\ChallengeResource;
+use App\Http\Resources\TagResource;
+use App\Notifications\NewChallengeNotification;
 use App\Services\Interfaces\ChallengeServiceInterface;
 use App\Services\Interfaces\MediaServiceInterface;
 
@@ -27,21 +30,46 @@ class ChallengeController extends Controller
     }
 
     /**
+     * Display a listing of the challengeTags.
+     */
+    public function getChallengeTags()
+    {
+        $challengeTags = $this->challengeService->getChallengeTags();
+        return $this->responseOk(TagResource::collection($challengeTags), 'get challenge tags is success');
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreChallengeRequest $request, MediaServiceInterface $mediaService)
     {
         $payload = $request->validated();
-        $image = \Arr::get($payload, 'image', null);
-        try {
-            $payload['image'] = $mediaService->createMedia($image, MediaCollection::Challenge);
-            $payload['created_by'] = $request->user()->id;
 
+        try {
+            $payload['images'] = \Arr::map($payload['images'], function($image) use ($mediaService) {
+                return $mediaService->createMedia($image, MediaCollection::Challenge);
+            });
+            
+            $payload['created_by'] = $request->user()->id;
             $this->challengeService->createChallenge($payload);
 
-            return $this->responseNoContent('challenge created');
+            return $this->responseNoContent('your challenge created');
         } catch (\Throwable $th) {
-            abort(400, $th->getMessage());
+            return $this->responseFailed($th->getMessage());
+        }
+    }
+
+    /**
+     * confirm a newly challenge.
+     */
+    public function confirmNewChallenge($id, ConfirmNewChallengeRequest $request)
+    {
+        $payload = $request->validated();
+
+        try {
+            $this->challengeService->confirmNewChallenge($id, $payload);
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }
 

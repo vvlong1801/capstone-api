@@ -54,7 +54,7 @@ class ExerciseService extends BaseService implements ExerciseServiceInterface
 
     public function getExerciseById($id)
     {
-        return Exercise::with(['groupTags', 'createdBy', 'gif', 'image', 'video', 'muscles', 'equipment'])->findOrFail($id);
+        return Exercise::with(['groupTags', 'createdBy', 'gif', 'image', 'muscles', 'equipment'])->findOrFail($id);
     }
 
     public function createExercise(array $payload)
@@ -62,13 +62,12 @@ class ExerciseService extends BaseService implements ExerciseServiceInterface
         \DB::beginTransaction();
         try {
             // insert exercise info
-            $exercise = Exercise::create(\Arr::only($payload, ['name', 'level', 'created_by', 'requirement_unit', 'requirement_initial', 'equipment_id', 'description']));
+            $exercise = Exercise::create(\Arr::only($payload, ['name', 'level', 'created_by', 'requirement_unit', 'requirement_initial', 'equipment_id', 'description', 'youtube_url']));
             $exercise->muscles()->attach($payload['muscles']);
 
             // insert media of exercise
             $exercise->gif()->save($payload['gif']);
             $exercise->image()->save($payload['image']);
-            if ($payload['video']) $exercise->video()->save($payload['video']);
 
             // resolve group tags
             // == if tag_name && type = group_exercise is existed then ignore
@@ -97,9 +96,6 @@ class ExerciseService extends BaseService implements ExerciseServiceInterface
             }
             if ($image = $payload['image']) {
                 $exercise->image()->update($image->getAttributes());
-            }
-            if ($video = $payload['video']) {
-                $exercise->video()->update($video->getAttributes());
             }
 
 

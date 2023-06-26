@@ -37,9 +37,7 @@ class ExerciseResource extends JsonResource
             "image" => new MediaResource(
                 $this->whenLoaded('image')
             ),
-            "video" => new MediaResource(
-                $this->whenLoaded('video')
-            ),
+            "youtube_url" => $this->whenNotNull($this->youtube_url),
 
         ];
     }

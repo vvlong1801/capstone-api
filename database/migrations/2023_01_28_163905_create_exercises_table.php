@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('requirement_unit');
             $table->string('requirement_initial');
             $table->unsignedBigInteger('created_by');
+            $table->string('youtube_url')->nullable();
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             // $table->integer('evaluate_method')->comment('0: repitition, 1: time-based, 2: distance-based');
             $table->string('description')->nullable();

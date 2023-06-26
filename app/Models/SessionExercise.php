@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class SessionExercise extends Model
 {
     use HasFactory;
-    protected $with = ['exercise'];
+    protected $with = ['exercise', 'exercise.image'];
     protected $table = 'exercise_phase_session';
     protected $guarded = [];
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\MuscleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Creator\ChallengeController;
 use App\Http\Controllers\MediaController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -41,7 +42,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/exercises', ExerciseController::class);
 
     //=============== Challenge ===============
+    Route::get('/challenges/tags', [ChallengeController::class, 'getChallengeTags']);
     Route::apiResource('/challenges', ChallengeController::class);
+    Route::put('/challenges/{id}/confirm', [ChallengeController::class, 'confirmNewChallenge']);
 
     //=============== Users ===============
     Route::get('/users/search/{keyword}', [UserController::class, 'search']);

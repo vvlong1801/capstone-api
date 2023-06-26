@@ -61,11 +61,6 @@ class ExerciseController extends Controller
             $payload['gif'] = $this->mediaService->createMedia($payload['gif'], MediaCollection::Exercise);
             $payload['image'] = $this->mediaService->createMedia($payload['image'], MediaCollection::Exercise);
 
-            $video = \Arr::get($payload, 'video', false);
-            if ($video) {
-                $payload['video'] =  $this->mediaService->createMedia($video, MediaCollection::Exercise);
-            }
-
             $this->exerciseService->createExercise($payload);
             return $this->responseNoContent('exercise created');
         } catch (\Throwable $th) {
@@ -98,11 +93,6 @@ class ExerciseController extends Controller
         try {
             $payload['gif'] = $this->mediaService->updateMedia($payload['gif'], MediaCollection::Exercise);
             $payload['image'] = $this->mediaService->updateMedia($payload['image'], MediaCollection::Exercise);
-
-            $video = \Arr::get($payload, 'video', false);
-            if ($video) {
-                $payload['video'] =  $this->mediaService->updateMedia($video, MediaCollection::Exercise);
-            }
 
             $this->exerciseService->updateExercise($id, $payload);
             return $this->responseNoContent('exercise updated');

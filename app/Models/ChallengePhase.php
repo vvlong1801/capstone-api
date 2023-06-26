@@ -22,22 +22,6 @@ class ChallengePhase extends Model
         );
     }
 
-    protected function minRank(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($name) => RankWorkoutUser::fromName(ucfirst($name)),
-            get: fn ($value) => RankWorkoutUser::fromValue($value),
-        );
-    }
-
-    protected function maxRank(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($name) => RankWorkoutUser::fromName(ucfirst($name)),
-            get: fn ($value) => RankWorkoutUser::fromValue($value),
-        );
-    }
-
     public function challenge()
     {
         return $this->belongsTo(Challenge::class);

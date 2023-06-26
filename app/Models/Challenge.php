@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\CommonStatus;
+use App\Enums\Level;
 use App\Enums\RoleMemberChallenge;
 use App\Enums\StatusChallenge;
 use App\Enums\TypeChallenge;
@@ -11,6 +12,7 @@ use App\Enums\TypeTag;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User;
 
 class Challenge extends Model
@@ -23,19 +25,12 @@ class Challenge extends Model
     protected $casts = [
         'status' => StatusChallenge::class,
         'type' => TypeChallenge::class,
+        'level' => Level::class,
         'start_at' => 'datetime',
         'finish_at' => 'datetime',
         // 'paused_at' => 'datetime',
     ];
 
-
-    protected function status(): Attribute
-    {
-        return Attribute::make(
-            // set: fn ($name) => CommonStatus::fromName(ucfirst($name)),
-            get: fn ($value) => CommonStatus::fromValue($value),
-        );
-    }
 
     protected function type(): Attribute
     {
@@ -45,29 +40,29 @@ class Challenge extends Model
         );
     }
 
-    protected function participant(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($name) => TypeParticipant::fromName(ucfirst($name)),
-            get: fn ($value) => TypeParticipant::fromValue($value),
-        );
-    }
+    // protected function participant(): Attribute
+    // {
+    //     return Attribute::make(
+    //         set: fn ($name) => TypeParticipant::fromName(ucfirst($name)),
+    //         get: fn ($value) => TypeParticipant::fromValue($value),
+    //     );
+    // }
 
-    protected function memberCensorship(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($name) => RoleMemberChallenge::fromName(ucfirst($name)),
-            get: fn ($value) => RoleMemberChallenge::fromValue($value),
-        );
-    }
+    // protected function memberCensorship(): Attribute
+    // {
+    //     return Attribute::make(
+    //         set: fn ($name) => RoleMemberChallenge::fromName(ucfirst($name)),
+    //         get: fn ($value) => RoleMemberChallenge::fromValue($value),
+    //     );
+    // }
 
-    protected function resultCensorship(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($name) => RoleMemberChallenge::fromName(ucfirst($name)),
-            get: fn ($value) => RoleMemberChallenge::fromValue(ucfirst($value)),
-        );
-    }
+    // protected function resultCensorship(): Attribute
+    // {
+    //     return Attribute::make(
+    //         set: fn ($name) => RoleMemberChallenge::fromName(ucfirst($name)),
+    //         get: fn ($value) => RoleMemberChallenge::fromValue(ucfirst($value)),
+    //     );
+    // }
 
     // =============== relationship =================
     // ==============================================
@@ -76,9 +71,14 @@ class Challenge extends Model
         return $this->hasMany(ChallengePhase::class);
     }
 
-    public function image()
+    public function mainImage()
     {
         return $this->morphOne(Media::class, 'mediable');
+    }
+
+    public function images(): MorphMany
+    {
+        return $this->morphMany(Media::class, 'mediable');
     }
 
     public function createdBy()

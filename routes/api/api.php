@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\WorkoutUser\AuthController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\WorkoutUser\ChallengeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,3 +27,5 @@ Route::middleware('auth:sanctum')->group(function () {
     //=============== Upload file ===============
     Route::post('/upload', [MediaController::class, 'upload']);
 });
+
+Route::apiResource('/challenges', ChallengeController::class);

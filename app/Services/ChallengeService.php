@@ -2,27 +2,67 @@
 
 namespace App\Services;
 
+use App\Enums\Role;
 use App\Enums\RoleChallenge;
 use App\Enums\StatusChallenge;
 use App\Enums\TypeTag;
+use App\Events\NewChallengeEvent;
 use App\Models\Challenge;
 use App\Models\ChallengePhase;
 use App\Models\SessionExercise;
 use App\Models\Tag;
+use App\Models\User;
+use App\Notifications\NewChallengeNotification;
 use App\Services\Interfaces\ChallengeServiceInterface;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Notification;
 
 class ChallengeService extends BaseService implements ChallengeServiceInterface
 {
     public function getChallenges()
     {
-        return Challenge::with(['image', 'createdBy'])->get();
+        return Challenge::with(['mainImage', 'createdBy', 'tags'])->withCount(['phases'])->withSum('phases as total_sessions', 'total_days')->get();
     }
 
     public function getChallengeById($id)
     {
-        $challenge = Challenge::with(['createdBy', 'image', 'phases', 'phases.sessions', 'phases.sessions.sessionExercises'])->whereId($id)->first();
+        $challenge = Challenge::with(['createdBy', 'image', 'phases', 'phases.sessions', 'phases.sessions.sessionExercises', 'phases.sessions.sessionExercises'])->whereId($id)->first();
         return $challenge;
+    }
+
+    public function getChallengeStatistics($id){
+
+    }
+    public function getChallengeFeedbacks($id){
+
+    }
+
+    public function getChallengeTags()
+    {
+        return Tag::whereType(TypeTag::ChallengeTag)->get();
+    }
+
+    public function confirmNewChallenge($id, $payload)
+    {
+        // change status
+        Challenge::whereId($id)
+            ->where('status', StatusChallenge::init)->when($payload['approve'], function (QueryBuilder $query) {
+                $query->update(['approved_at' => now(), 'status' => StatusChallenge::waiting]);
+                $query->where('start_at', '<', now())
+                    ->where('finish_at', '>', now())
+                    ->update(['status', StatusChallenge::running]);
+            }, function (QueryBuilder $query) {
+                $query->update(['status' => StatusChallenge::cancel]);
+            });
+
+        //approve = true
+        //==notify creator
+
+        //==send invitation
+
     }
 
     public function createChallenge(array $payload)
@@ -37,15 +77,14 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
             $challenge = new Challenge(\Arr::only($payload, [
                 'name', 'description', 'sort_desc', 'max_members',
                 'sort_desc', 'accept_all', 'public',
-                'created_by', 'start_at', 'finish_at',
+                'created_by', 'start_at', 'finish_at', 'youtube_url'
             ]));
 
             $challenge->status = StatusChallenge::init;
             $challenge->save();
 
             // save media
-            $challenge->image()->save($payload['image']);
-
+            $challenge->images()->saveMany($payload['images']);
             //save tags
             $ids = Tag::createOrIgnore(TypeTag::ChallengeTag, $payload['tags']);
             $challenge->tags()->attach($ids);
@@ -61,9 +100,14 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
                 return $item;
             });
             $challenge->invitations()->createMany($payload['invitation']);
-            dd('aaaa');
             // send notification to admin
+            // $superAdmin = User::with(['account' => function (Builder $query) {
+            //     $query->where('role', Role::superAdmin);
+            // }])->first();
 
+            // event(new NewChallengeEvent($challenge));
+            // Notification::send($superAdmin, new NewChallengeNotification($challenge));
+            // dd($superAdmin);
             \DB::commit();
         } catch (\Throwable $th) {
             \DB::rollback();
@@ -117,5 +161,9 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
                 ]);
             }
         }
+    }
+
+    private function getChallengeLevel(){
+
     }
 }

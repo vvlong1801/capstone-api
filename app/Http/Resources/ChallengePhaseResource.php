@@ -18,10 +18,8 @@ class ChallengePhaseResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'order' => $this->order,
-            'level' => $this->level,
-            'count_sessions' => $this->count_sessions,
-            'active_days' => $this->active_days,
-            'rest_days' => $this->rest_days,
+            'level' => $this->whenNotNull($this->level),
+            'rest_days' => $this->total_days,
             'sessions' => PhaseSessionResource::collection($this->whenLoaded('sessions')),
         ];
     }

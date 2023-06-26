@@ -47,11 +47,6 @@ class Exercise extends Model
         return $this->morphOne(Media::class, 'mediable')->whereGif();
     }
 
-    public function video()
-    {
-        return $this->morphOne(Media::class, 'mediable')->whereVideo();
-    }
-
     public function muscles()
     {
         return $this->belongsToMany(Muscle::class);
