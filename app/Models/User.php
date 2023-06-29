@@ -57,4 +57,9 @@ class User extends Authenticatable implements AuthMustVerifyEmail
     {
         return $this->morphOne(Media::class, 'mediable');
     }
+
+    public function plans()
+    {
+        return $this->hasMany(Plan::class);
+    }
 }

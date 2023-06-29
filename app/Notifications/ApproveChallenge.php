@@ -9,17 +9,19 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewChallengeNotification extends Notification
+class ApproveChallenge extends Notification
 {
     use Queueable;
 
     public $challenge;
+    public $approve;
     /**
      * Create a new notification instance.
      */
-    public function __construct(Challenge $challenge)
+    public function __construct(Challenge $challenge, $approve)
     {
         $this->challenge = $challenge;
+        $this->approve = $approve;
     }
 
     /**
@@ -38,9 +40,9 @@ class NewChallengeNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
+                    ->line('The introduction to the notification.')
+                    ->action('Notification Action', url('/'))
+                    ->line('Thank you for using our application!');
     }
 
     /**
@@ -55,13 +57,16 @@ class NewChallengeNotification extends Notification
         ];
     }
 
-    /**
+        /**
      * Get the broadcastable representation of the notification.
      */
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         return new BroadcastMessage([
-            'challenge' => $this->challenge->name,
+            'challenge_id' => $this->challenge->id,
+            'challenge_name' => $this->challenge->name,
+            'approve' => $this->approve,
+            'message' => $this->approve ? 'your challenge approved' : 'your challenge unapproved, Please check the email for the reason'
         ]);
     }
 }

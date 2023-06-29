@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('youtube_url')->nullable();
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             // $table->integer('evaluate_method')->comment('0: repitition, 1: time-based, 2: distance-based');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->foreignId('equipment_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\CommonStatus;
 use App\Enums\Level;
+use App\Enums\RoleChallenge;
 use App\Enums\RoleMemberChallenge;
 use App\Enums\StatusChallenge;
 use App\Enums\TypeChallenge;
@@ -13,11 +14,12 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Challenge extends Model
 {
     use HasFactory;
+    // use SoftDeletes;
 
     protected $guarded = [];
     protected $dateFormat = 'Y-m-d H:i:s';
@@ -94,5 +96,13 @@ class Challenge extends Model
     public function invitations()
     {
         return $this->hasMany(ChallengeInvitation::class);
+    }
+
+    public function members()
+    {
+        return $this->belongsToMany(User::class, 'challenge_members')
+            ->withPivot(['role', 'status'])
+            ->withPivotValue('role', RoleChallenge::member->value)
+            ->withTimestamps();
     }
 }

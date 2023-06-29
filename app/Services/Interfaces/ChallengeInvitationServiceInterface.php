@@ -5,5 +5,6 @@ namespace App\Services\Interfaces;
 
 interface ChallengeInvitationServiceInterface
 {
-    public function saveInvitation($data);
+    public function getInvitationByChallengeId($id);
+    public function createInvitation($challenge, $payload);
 }

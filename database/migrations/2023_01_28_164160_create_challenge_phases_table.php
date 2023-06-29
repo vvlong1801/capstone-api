@@ -18,11 +18,7 @@ return new class extends Migration
             $table->integer('order');
             $table->integer('level')->nullable();
             $table->integer('total_days');
-            $table->string('note')->nullable();
-            // $table->integer('min_rank')->default(0)->comment('0: beginner, 1: middle, 2:senior, 3:pro');
-            // $table->integer('max_rank')->default(4)->comment('0: beginner, 1: middle, 2:senior, 3:pro');
-            // $table->integer('active_days');
-            // $table->integer('rest_days');
+            $table->text('note')->nullable();
             $table->timestamps();
         });
     }

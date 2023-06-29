@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\Level;
-use App\Enums\PlanStatus;
-use Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,13 +9,15 @@ class Plan extends Model
 {
     use HasFactory;
 
-    public function member()
+    public $guarded = [];
+
+    public function user()
     {
-        return $this->belongsTo(Member::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function challenge()
+    public function challengePhase()
     {
-        return $this->belongsTo(Challenge::class);
+        return $this->belongsTo(ChallengePhase::class);
     }
 }

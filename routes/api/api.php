@@ -3,6 +3,7 @@
 use App\Http\Controllers\WorkoutUser\AuthController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\WorkoutUser\ChallengeController;
+use App\Models\Challenge;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +27,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=============== Upload file ===============
     Route::post('/upload', [MediaController::class, 'upload']);
+    Route::get('/challenges/join/{id}', [ChallengeController::class, 'join']);
 });
-
 Route::apiResource('/challenges', ChallengeController::class);

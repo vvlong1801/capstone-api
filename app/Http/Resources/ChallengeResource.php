@@ -31,7 +31,9 @@ class ChallengeResource extends JsonResource
             'level' => $this->level?->name,
             'start_at' => $this->whenNotNull($this->start_at),
             'finish_at' => $this->whenNotNull($this->finish_at),
-            'phases' => ChallengePhaseResource::collection($this->whenLoaded('phases')),
+            'youtube_url' => $this->whenNotNull($this->youtube_url),
+            // 'phases' => ChallengePhaseResource::collection($this->whenLoaded('phases')),
+            'images' => MediaResource::collection($this->whenLoaded('images')),
         ];
     }
 }

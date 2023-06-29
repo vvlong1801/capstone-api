@@ -14,4 +14,13 @@ class ChallengeInvitation extends Model
     protected $casts = [
         'role' => RoleChallenge::class,
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function challenge()
+    {
+        return $this->belongsTo(Challenge::class);
+    }
 }
