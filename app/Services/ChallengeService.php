@@ -24,7 +24,7 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
 {
     public function getChallenges()
     {
-        return Challenge::with(['image', 'createdBy', 'tags'])->get();
+        return Challenge::with(['image', 'createdBy', 'tags'])->withCount(['phases'])->withSum('phases as total_sessions', 'total_days')->get();
     }
 
     public function getChallengeById($id)
@@ -50,7 +50,7 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
             }, function (QueryBuilder $query) {
                 $query->update(['status' => StatusChallenge::cancel]);
             });
-            
+
         //approve = true
         //==notify creator
 
@@ -100,7 +100,7 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
             }])->first();
 
             // event(new NewChallengeEvent($challenge));
-            Notification::send($superAdmin, new NewChallengeNotification($challenge));
+            // Notification::send($superAdmin, new NewChallengeNotification($challenge));
             dd($superAdmin);
             \DB::commit();
         } catch (\Throwable $th) {
@@ -155,5 +155,9 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
                 ]);
             }
         }
+    }
+
+    private function getChallengeLevel(){
+
     }
 }

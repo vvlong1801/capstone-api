@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\CommonStatus;
+use App\Enums\Level;
 use App\Enums\RoleMemberChallenge;
 use App\Enums\StatusChallenge;
 use App\Enums\TypeChallenge;
@@ -23,6 +24,7 @@ class Challenge extends Model
     protected $casts = [
         'status' => StatusChallenge::class,
         'type' => TypeChallenge::class,
+        'level' => Level::class,
         'start_at' => 'datetime',
         'finish_at' => 'datetime',
         // 'paused_at' => 'datetime',
