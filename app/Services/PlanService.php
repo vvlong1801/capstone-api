@@ -9,19 +9,24 @@ use Illuminate\Support\Facades\Auth;
 
 class PlanService extends BaseService implements PlanServiceInterface
 {
-    public function getPlans()
+    public function getPlanChallenges()
     {
-        $plans = Plan::where('user_id', Auth::user()->id);
-        return $plans;
+        $plan = Plan::where('user_id', Auth::user()->id)->get();
+        return $plan;
+    }
+
+    public function getPlanById($id){
+        $plan = Plan::find($id);
+        return $plan;
     }
 
     public function createPlan($challengeId)
     {
         \DB::beginTransaction();
         try {
-            $challenge = Challenge::find($challengeId);
             $plan = \DB::table('plans')->insertOrIgnore([
-                'challenge_phase_id' => $challenge->phases()->first()->id,
+                
+                'challenge_id' => $challengeId,
                 'user_id' => Auth::user()->id,
                 'current_session' => 1
             ]);
