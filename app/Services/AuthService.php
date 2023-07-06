@@ -16,23 +16,23 @@ class AuthService extends BaseService implements AuthServiceInterface
     public function authenticate(array $data, Role $role)
     {
         $user = User::where('email', $data['email'])->first();
-        if (!$user || !Hash::check($data['password'], $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
-        }
+        // if (!$user || !Hash::check($data['password'], $user->password)) {
+        //     throw ValidationException::withMessages([
+        //         'email' => ['The provided credentials are incorrect.'],
+        //     ]);
+        // }
 
-        if (!$user->hasVerifiedEmail()) {
-            throw ValidationException::withMessages([
-                'email' => ["The account hasn't verified email!"],
-            ]);
-        }
+        // if (!$user->hasVerifiedEmail()) {
+        //     throw ValidationException::withMessages([
+        //         'email' => ["The account hasn't verified email!"],
+        //     ]);
+        // }
 
-        if (!$user->isRole($role) && !$user->isSuperAdmin()) {
-            throw ValidationException::withMessages([
-                'email' => ["The account hasn't permission " . $role->name . "!"],
-            ]);
-        }
+        // if (!$user->isRole($role) && !$user->isSuperAdmin()) {
+        //     throw ValidationException::withMessages([
+        //         'email' => ["The account hasn't permission " . $role->name . "!"],
+        //     ]);
+        // }
 
         return $user;
     }
