@@ -42,9 +42,7 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
 
     public function getChallengeTemplateById($id)
     {
-        // $template = ChallengePhase::with(['challenge', 'sessions', 'sessions.sessionExercises'])
-        //     ->where('challenge.id', $id)->get();
-        $template = ChallengePhase::where('challenge_id', $id)->with(['sessions', 'sessions.sessionExercises'])->get();
+        $template = ChallengePhase::where('challenge_id', $id)->with(['sessions', 'sessions.sessionExercises', 'sessions.sessionExercises.exercise'])->get();
 
         return $template;
     }

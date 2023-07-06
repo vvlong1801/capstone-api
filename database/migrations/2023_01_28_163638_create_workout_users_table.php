@@ -17,11 +17,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->integer('status')->default(1);
+            $table->string('nick_name')->nullable();
             $table->integer('gender')->nullable();
             $table->integer('age')->nullable();
             $table->integer('height')->nullable();
             $table->integer('weight')->nullable();
             $table->integer('bmi')->nullable();
+            $table->integer('level')->default(1);
             $table->timestamps();
         });
     }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\WorkoutUser\AuthController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\WorkoutUser\ChallengeController;
+use App\Http\Controllers\WorkoutUser\PlanController;
 use App\Models\Challenge;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=============== Upload file ===============
     Route::post('/upload', [MediaController::class, 'upload']);
+
+    //=============== Challenge ===============
     Route::get('/challenges/join/{id}', [ChallengeController::class, 'join']);
+
+    //=============== plan ===============
+    Route::get('/plans/{id}/schedule', [PlanController::class, 'getSchedule']);
+    Route::apiResource('/plans', PlanController::class);
 });
 Route::apiResource('/challenges', ChallengeController::class);
