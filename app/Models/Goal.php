@@ -5,18 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PlanSession extends Model
+class Goal extends Model
 {
     use HasFactory;
-
     protected $guarded = [];
 
-    public function plan ()
+    public function users()
     {
-        return $this->belongsTo(Plan::class);
+        return $this->belongsToMany(User::class);
     }
 
-    public function phaseSession(){
-        return $this->belongsTo(PhaseSession::class);
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
     }
 }
