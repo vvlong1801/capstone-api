@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('age')->nullable();
             $table->integer('height')->nullable();
             $table->integer('weight')->nullable();
-            $table->integer('bmi')->nullable();
+            $table->double('bmi')->nullable();
             $table->integer('level')->default(1);
             $table->timestamps();
         });

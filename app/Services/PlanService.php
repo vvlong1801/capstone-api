@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Challenge;
+
 use App\Models\Plan;
-use App\Models\PlanSession;
+
+use App\Models\ResultSession;
 use App\Services\Interfaces\PlanServiceInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,17 +26,17 @@ class PlanService extends BaseService implements PlanServiceInterface
 
     public function createPlan($challengeId)
     {
-        \DB::beginTransaction();
+        DB::beginTransaction();
         try {
-            $plan = \DB::table('plans')->insertOrIgnore([
+            $plan = DB::table('plans')->insertOrIgnore([
                 'challenge_id' => $challengeId,
                 'user_id' => Auth::user()->id,
                 'current_session' => 1
             ]);
-            \DB::commit();
+            DB::commit();
             return $plan;
         } catch (\Throwable $th) {
-            \DB::rollback();
+            DB::rollback();
             throw $th;
         }
     }
@@ -46,7 +47,7 @@ class PlanService extends BaseService implements PlanServiceInterface
 
         try {
 
-            $planSession = new PlanSession(\Arr::only($payload, [
+            $planSession = new ResultSession(\Arr::only($payload, [
                 'plan_id', 'phase_session_id', 'calories_burned'
             ]));
             $duration = \Carbon\Carbon::parse($payload['duration'])->format('H:i:s');
