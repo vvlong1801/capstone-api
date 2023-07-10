@@ -4,6 +4,7 @@ use App\Http\Controllers\WorkoutUser\AuthController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\WorkoutUser\ChallengeController;
 use App\Http\Controllers\WorkoutUser\PlanController;
+use App\Http\Controllers\WorkoutUser\WorkoutController;
 use App\Models\Challenge;
 use Illuminate\Support\Facades\Route;
 
@@ -31,9 +32,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=============== Challenge ===============
     Route::get('/challenges/join/{id}', [ChallengeController::class, 'join']);
+    Route::apiResource('/challenges', ChallengeController::class);
 
     //=============== plan ===============
     Route::get('/plans/{id}/schedule', [PlanController::class, 'getSchedule']);
     Route::apiResource('/plans', PlanController::class);
+
+    //=============== workout ===============
+    Route::post('/workout/result', [WorkoutController::class, 'storeResult']);
 });
-Route::apiResource('/challenges', ChallengeController::class);

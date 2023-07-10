@@ -19,6 +19,7 @@ class ChallengeController extends Controller
         $this->challengeService = $challengeService;
         $this->challengeMemberService = $challengeMemberService;
     }
+    
     /**
      * Display a listing of the resource.
      */
