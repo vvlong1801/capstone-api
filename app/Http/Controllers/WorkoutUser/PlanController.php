@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers\WorkoutUser;
 
+use App\Enums\MediaCollection;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\WorkoutUser\StorePlanSessionRequest;
 use App\Http\Resources\ChallengePhaseResource;
 use App\Http\Resources\ChallengeResource;
 use App\Http\Resources\WorkoutUser\PlanResource;
+use App\Notifications\NotifyMemberCompletedSession;
 use App\Services\Interfaces\ChallengeServiceInterface;
+use App\Services\Interfaces\MediaServiceInterface;
 use App\Services\Interfaces\PlanServiceInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class PlanController extends Controller
 {
@@ -17,7 +22,6 @@ class PlanController extends Controller
     public function __construct(PlanServiceInterface $planService)
     {
         $this->planService = $planService;
-
     }
     /**
      * Display a listing of the resource.
@@ -44,18 +48,20 @@ class PlanController extends Controller
     {
         $plan = $this->planService->getPlanById($id);
         $template = $challengeService->getChallengeTemplateById($plan->challenge_id);
-        return $this->responseOk(['plan' => new PlanResource($plan), 'schedule' =>ChallengePhaseResource::collection($template)], 'get plan success');
+        return $this->responseOk(['plan' => new PlanResource($plan), 'schedule' => ChallengePhaseResource::collection($template)], 'get plan success');
     }
 
     /**
      * Display the specified resource.
-     */
+    */
     public function getSchedule(string $id, ChallengeServiceInterface $challengeService)
     {
         $plan = $this->planService->getPlanById($id);
         $template = $challengeService->getChallengeTemplateById($plan->challenge_id);
         return $this->responseOk(
-            ChallengePhaseResource::collection($template), 'get plan success');
+            ChallengePhaseResource::collection($template),
+            'get plan success'
+        );
     }
 
     /**

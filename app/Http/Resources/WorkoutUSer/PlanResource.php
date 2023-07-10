@@ -3,7 +3,6 @@
 namespace App\Http\Resources\WorkoutUser;
 
 use App\Http\Resources\ChallengeResource;
-use App\Http\Resources\TagResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,6 +20,7 @@ class PlanResource extends JsonResource
             'challenge' => new ChallengeResource($this->challenge),
             'current_session' => $this->current_session,
             'current_phase' => $this->current_session,
+            'completed' => ($this->completed_at !== null),
         ];
     }
 }

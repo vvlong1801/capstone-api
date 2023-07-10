@@ -2,26 +2,24 @@
 
 namespace App\Notifications;
 
-use App\Models\Challenge;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ApproveChallenge extends Notification
+class NotifyMemberCompletedSession extends Notification
 {
     use Queueable;
 
-    public $challenge;
-    public $approve;
+    public $result;
+
     /**
      * Create a new notification instance.
      */
-    public function __construct(Challenge $challenge, $approve)
+    public function __construct($planSession)
     {
-        $this->challenge = $challenge;
-        $this->approve = $approve;
+        $this->result = $planSession;
     }
 
     /**
@@ -31,7 +29,7 @@ class ApproveChallenge extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['broadcast', 'database'];
+        return ['broadcast'];
     }
 
     /**
@@ -53,10 +51,7 @@ class ApproveChallenge extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'challenge_id' => $this->challenge->id,
-            'challenge_name' => $this->challenge->name,
-            'approve' => $this->approve,
-            'message' => $this->approve ? 'your challenge approved' : 'your challenge unapproved, Please check the email for the reason'
+            //
         ];
     }
 
@@ -66,10 +61,9 @@ class ApproveChallenge extends Notification
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         return new BroadcastMessage([
-            'challenge_id' => $this->challenge->id,
-            'challenge_name' => $this->challenge->name,
-            'approve' => $this->approve,
-            'message' => $this->approve ? 'your challenge approved' : 'your challenge unapproved, Please check the email for the reason'
+            'result' => $this->result->id,
+            'summary' => 'Result Workout',
+            'message' => 'your member send result workout session',
         ]);
     }
 }

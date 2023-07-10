@@ -11,5 +11,6 @@ enum MediaCollection: string
     case Exercise = 'exercises';
     case Muscle = 'muscles';
     case Equipment = 'equipments';
+    case PlanSession = 'plan_session';
     case Temporary = 'temporaries';
 }

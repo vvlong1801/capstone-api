@@ -85,9 +85,9 @@ class ChallengeController extends Controller
                 //notify invitation
                 $invitations = $this->challengeInvitationService->getInvitationByChallengeId($id);
                 // Notification::send()
-                foreach ($invitations as $key => $invitation) {
-                    Notification::send($invitation->user, new InviteJoinChallenge($invitation, true));
-                }
+                // foreach ($invitations as $key => $invitation) {
+                //     Notification::send($invitation->user, new InviteJoinChallenge($invitation, true));
+                // }
                 //notify creator
                 Notification::send($challenge->createdBy, new ApproveChallenge($challenge, true));
             } else {

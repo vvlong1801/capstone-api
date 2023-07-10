@@ -2,32 +2,34 @@
 
 namespace App\Services;
 
-use App\Enums\Role;
-use App\Enums\RoleChallenge;
 use App\Enums\StatusChallenge;
 use App\Enums\TypeTag;
-use App\Events\NewChallengeEvent;
 use App\Models\Challenge;
-use App\Models\ChallengeInvitation;
 use App\Models\ChallengePhase;
+use App\Models\Plan;
 use App\Models\SessionExercise;
 use App\Models\Tag;
-use App\Models\User;
 use App\Services\Interfaces\ChallengeServiceInterface;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Notification;
 
 class ChallengeService extends BaseService implements ChallengeServiceInterface
 {
     public function getChallenges()
     {
-        return Challenge::with(['mainImage', 'createdBy', 'tags'])
+        $user = Auth::user();
+        $challenge = Challenge::with(['mainImage', 'createdBy', 'tags'])
             ->withCount(['phases'])
-            ->withSum('phases as total_sessions', 'total_days')
-            ->get();
+            ->withSum('phases as total_sessions', 'total_days');
+        if ($user->hasAdminPermissions) {
+            return $challenge->get();
+        } else if ($user->isCreator) {
+            return $challenge->where("created_by", $user->id)->get();
+        } else {
+            $userChallenges = Plan::where("user_id", $user->id)->pluck("challenge_id");
+            $result = $challenge->whereNotIn('id', $userChallenges)->where('status', StatusChallenge::running)->get();
+            return $result;
+        }
     }
 
     public function getChallengeById($id)

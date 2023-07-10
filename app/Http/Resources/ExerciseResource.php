@@ -32,7 +32,7 @@ class ExerciseResource extends JsonResource
             ),
             "description" => $this->description,
             "gif" => new MediaResource(
-                $this->whenLoaded('gif')
+                $this->whenNotNull($this->whenLoaded('gif'))
             ),
             "image" => new MediaResource(
                 $this->whenLoaded('image')

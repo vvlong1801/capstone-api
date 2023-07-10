@@ -43,6 +43,18 @@ trait HasRoles
     }
 
     /**
+     * check logged user is member
+     *
+     * @return Attribute
+     */
+    public function isCreator(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->isRole(Role::creator)
+        );
+    }
+
+    /**
      * check user is admin
      *
      * @return Attribute
