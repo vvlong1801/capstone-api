@@ -21,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
         Services\Interfaces\ChallengeMemberServiceInterface::class => Services\ChallengeMemberService::class,
         Services\Interfaces\PlanServiceInterface::class => Services\PlanService::class,
         Services\Interfaces\WorkoutServiceInterface::class => Services\WorkoutService::class,
+        Services\Interfaces\AccountServiceInterface::class => Services\AccountService::class,
+        Services\Interfaces\CreatorServiceInterface::class => Services\CreatorService::class,
     ];
     /**
      * Register any application services.
