@@ -4,9 +4,11 @@ use App\Http\Controllers\WorkoutUser\AuthController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\WorkoutUser\ChallengeController;
 use App\Http\Controllers\WorkoutUser\PlanController;
+use App\Http\Controllers\WorkoutUser\ProfileController;
 use App\Http\Controllers\WorkoutUser\WorkoutController;
 use App\Models\Challenge;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,4 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=============== workout ===============
     Route::post('/workout/result', [WorkoutController::class, 'storeResult']);
+
+    //=============== profile ===============
+    Route::get('/goals', [ProfileController::class, 'getGoals']);
+    Route::put('/profile/{id}', [ProfileController::class, 'update']);
 });

@@ -21,9 +21,10 @@ class AppServiceProvider extends ServiceProvider
         Services\Interfaces\ChallengeMemberServiceInterface::class => Services\ChallengeMemberService::class,
         Services\Interfaces\PlanServiceInterface::class => Services\PlanService::class,
         Services\Interfaces\WorkoutServiceInterface::class => Services\WorkoutService::class,
+        Services\Interfaces\ProfileServiceInterface::class => Services\ProfileService::class,
     ];
     /**
-     * Register any application services.
+     * Register any application services.   
      */
     public function register(): void
     {
