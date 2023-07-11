@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\PhaseSession;
-use App\Models\ResultSession;
+use App\Models\SessionResult;
 use App\Services\Interfaces\WorkoutServiceInterface;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +16,7 @@ class WorkoutService extends BaseService implements WorkoutServiceInterface
 
         try {
 
-            $planSession = new ResultSession(\Arr::only($payload, [
+            $planSession = new SessionResult(\Arr::only($payload, [
                 'plan_id', 'phase_session_id', 'calories_burned'
             ]));
             $duration = \Carbon\Carbon::parse($payload['duration'])->format('H:i:s');

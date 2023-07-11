@@ -6,24 +6,28 @@ use App\Enums\Role;
 use App\Http\Controllers\BaseAuthController;
 use App\Http\Requests\WorkoutUser\Auth\LoginRequest;
 use App\Http\Requests\WorkoutUser\Auth\RegisterRequest;
+use App\Http\Resources\WorkoutUser\ProfileResource;
+use App\Services\Interfaces\ProfileServiceInterface;
 use App\Services\Interfaces\UserServiceInterface;
 use Illuminate\Auth\Events\Registered;
 
 
 class AuthController extends BaseAuthController
 {
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request, ProfileServiceInterface $profileService)
     {
         $payload = $request->validated();
 
         try {
             $user = $this->authService->authenticate($payload, Role::workoutUser);
+            $profile = $profileService->getProfileByUserId($user->id);
         } catch (\Throwable $th) {
             throw $th;
         }
 
         $response = [
             'access_token' => $user->createToken('auth_token')->plainTextToken,
+            'profile' => new ProfileResource($profile),
             'token_type' => 'Bearer',
         ];
 

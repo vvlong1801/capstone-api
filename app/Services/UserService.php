@@ -6,6 +6,7 @@ use App\Enums\Role;
 use App\Enums\StatusAccount;
 use App\Models\Account;
 use App\Models\User;
+use App\Models\WorkoutUser;
 use App\Services\Interfaces\UserServiceInterface;
 use Illuminate\Support\Facades\Hash;
 
@@ -43,7 +44,11 @@ class UserService extends BaseService implements UserServiceInterface
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
                 'account_id' => $account->id,
+                'first_login' => true,
             ]);
+            if ($role == Role::workoutUser) {
+                WorkoutUser::create(['user_id', $user->id]);
+            }
             \DB::commit();
             return $user;
         } catch (\Exception $e) {
