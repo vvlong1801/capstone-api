@@ -28,9 +28,9 @@ class AuthService extends BaseService implements AuthServiceInterface
             ]);
         }
 
-        if (!$user->isRole($role) && !$user->isSuperAdmin()) {
+        if (!$user->hasCreatorPermissions && (\Str::contains(request()->route()->uri, 'creator') || \Str::contains(request()->route()->uri, 'admin'))) {
             throw ValidationException::withMessages([
-                'email' => ["The account hasn't permission " . $role->name . "!"],
+                'email' => ["The account hasn't permission !"],
             ]);
         }
 
