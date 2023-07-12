@@ -26,6 +26,7 @@ class User extends Authenticatable implements AuthMustVerifyEmail
         'email',
         'password',
         'phone_number',
+        'first_login',
         'account_id',
     ];
 
@@ -56,6 +57,11 @@ class User extends Authenticatable implements AuthMustVerifyEmail
     public function avatar()
     {
         return $this->morphOne(Media::class, 'mediable');
+    }
+
+    public function workoutUser()
+    {
+        return $this->hasOne(WorkoutUser::class);
     }
 
     public function plans()

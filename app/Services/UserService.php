@@ -8,6 +8,7 @@ use App\Models\Account;
 use App\Models\User;
 use App\Models\WorkoutUser;
 use App\Services\Interfaces\UserServiceInterface;
+use Exception;
 use Illuminate\Support\Facades\Hash;
 
 class UserService extends BaseService implements UserServiceInterface
@@ -46,14 +47,16 @@ class UserService extends BaseService implements UserServiceInterface
                 'account_id' => $account->id,
                 'first_login' => true,
             ]);
+
             if ($role == Role::workoutUser) {
-                WorkoutUser::create(['user_id', $user->id]);
+                $user->workoutUser()->create();
             }
+
             \DB::commit();
             return $user;
         } catch (\Exception $e) {
             \DB::rollback();
-            throw $e;
+            throw new Exception('your email was registered');
         }
     }
 }

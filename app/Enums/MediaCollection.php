@@ -12,5 +12,7 @@ enum MediaCollection: string
     case Muscle = 'muscles';
     case Equipment = 'equipments';
     case SessionResult = 'session_result';
+    case PersonalTrainerCertificate = 'pt_certificate';
+    case IssuerExampleCertificate = 'issuer_certificate';
     case Temporary = 'temporaries';
 }

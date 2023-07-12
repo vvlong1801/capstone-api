@@ -6,6 +6,7 @@ use App\Enums\Role;
 use App\Http\Controllers\BaseAuthController;
 use App\Http\Requests\Creator\Auth\LoginRequest;
 use App\Http\Requests\WorkoutUser\Auth\RegisterRequest;
+use App\Http\Resources\UserResource;
 use App\Services\Interfaces\UserServiceInterface;
 use Illuminate\Auth\Events\Registered;
 
@@ -26,6 +27,7 @@ class AuthController extends BaseAuthController
         $response = [
             'access_token' => $user->createToken('auth_token')->plainTextToken,
             'token_type' => 'Bearer',
+            'user_info' => new UserResource($user),
         ];
 
         return $this->responseOk($response, "login success");
@@ -41,7 +43,7 @@ class AuthController extends BaseAuthController
             // SEND EMAIL VERIFY
             event(new Registered($user));
         } catch (\Throwable $th) {
-            abort(404, "can't create account");
+            return $this->responseFailed($th->getMessage());
         }
 
         return $this->responseNoContent('Registration successful');

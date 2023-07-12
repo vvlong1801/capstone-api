@@ -22,7 +22,8 @@ class AuthController extends BaseAuthController
             $user = $this->authService->authenticate($payload, Role::workoutUser);
             $profile = $profileService->getProfileByUserId($user->id);
         } catch (\Throwable $th) {
-            throw $th;
+            abort(500, $th->getMessage());
+            // return $this->responseFailed($th->getMessage());
         }
 
         $response = [
@@ -44,7 +45,7 @@ class AuthController extends BaseAuthController
             // SEND EMAIL VERIFY
             event(new Registered($user));
         } catch (\Throwable $th) {
-            abort(404, "can't create account");
+            abort(404, $th->getMessage());
         }
 
         return $this->responseNoContent('Registration successful');

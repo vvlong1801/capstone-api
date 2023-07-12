@@ -30,7 +30,7 @@ class Controller extends BaseController
 
     public function responseFailed($message = '')
     {
-        return response()->json([
+        return response(500)->json([
             'message' => $message,
             'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
         ]);
