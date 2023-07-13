@@ -73,4 +73,9 @@ class User extends Authenticatable implements AuthMustVerifyEmail
     {
         return $this->belongsToMany(Goal::class);
     }
+    
+    public function challenges()
+    {
+        return $this->hasMany(Challenge::class);
+    }
 }
