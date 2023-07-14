@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\MediaCollection;
 use App\Models\Traits\HasPermissions;
 use App\Models\Traits\HasRoles;
 use Illuminate\Auth\MustVerifyEmail;
@@ -56,12 +57,17 @@ class User extends Authenticatable implements AuthMustVerifyEmail
 
     public function avatar()
     {
-        return $this->morphOne(Media::class, 'mediable');
+        return $this->morphOne(Media::class, 'mediable')->whereImage()->where('collection_name', MediaCollection::Avatar);
     }
 
     public function workoutUser()
     {
         return $this->hasOne(WorkoutUser::class);
+    }
+
+    public function creator()
+    {
+        return $this->hasOne(Creator::class);
     }
 
     public function plans()
@@ -73,7 +79,7 @@ class User extends Authenticatable implements AuthMustVerifyEmail
     {
         return $this->belongsToMany(Goal::class);
     }
-    
+
     public function challenges()
     {
         return $this->hasMany(Challenge::class);

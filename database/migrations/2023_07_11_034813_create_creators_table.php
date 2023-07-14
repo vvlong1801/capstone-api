@@ -11,17 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('personal_trainers', function (Blueprint $table) {
+        Schema::create('creators', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->integer('status')->default(1);
-            $table->foreignId('creator_id')->constrained()->cascadeOnDelete();
             $table->foreignId('certificate_issuer_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->boolean('certificate')->constrained()->cascadeOnDelete()->default(false);
-            $table->string('ID_number');
-            $table->string("address");
+            $table->string("address")->nullable();
+            $table->integer('gender')->nullable();
+            $table->integer('desired_salary')->nullable();
+            $table->integer('work_type')->nullable();
+            $table->integer('age')->nullable();
+            $table->integer("rate")->default(0);
+            $table->integer("num_rate")->default(0);
             $table->string("facebook")->nullable();
             $table->string("youtube")->nullable();
             $table->string("zalo")->nullable();
+            $table->text('introduce')->nullable();
             $table->timestamp("verified_at")->nullable();
             $table->timestamps();
         });
@@ -32,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('personal_trainers');
+        Schema::dropIfExists('creators');
     }
 };

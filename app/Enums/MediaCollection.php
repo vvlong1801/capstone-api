@@ -8,11 +8,13 @@ enum MediaCollection: string
 {
     use Helper;
     case Challenge = 'challenges';
+    case Avatar = 'avatars';
     case Exercise = 'exercises';
     case Muscle = 'muscles';
     case Equipment = 'equipments';
     case SessionResult = 'session_result';
     case PersonalTrainerCertificate = 'pt_certificate';
+    case TrainingWorkout = 'training_workouts';
     case IssuerExampleCertificate = 'issuer_certificate';
     case Temporary = 'temporaries';
 }

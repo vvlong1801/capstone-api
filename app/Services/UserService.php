@@ -6,7 +6,6 @@ use App\Enums\Role;
 use App\Enums\StatusAccount;
 use App\Models\Account;
 use App\Models\User;
-use App\Models\WorkoutUser;
 use App\Services\Interfaces\UserServiceInterface;
 use Exception;
 use Illuminate\Support\Facades\Hash;
@@ -50,6 +49,9 @@ class UserService extends BaseService implements UserServiceInterface
 
             if ($role == Role::workoutUser) {
                 $user->workoutUser()->create();
+            }
+            if ($role == Role::creator) {
+                $user->creator()->create();
             }
 
             \DB::commit();

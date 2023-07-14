@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\EquipmentController;
 use App\Http\Controllers\Admin\ExerciseController;
+use App\Http\Controllers\Admin\MuscleController;
 use App\Http\Controllers\Creator\AuthController;
 use App\Http\Controllers\Creator\ChallengeController;
+use App\Http\Controllers\Creator\ProfileController;
 use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;
 /*
@@ -26,6 +29,12 @@ Route::middleware('auth:sanctum')->group(function () {
     //=============== Upload file ===============
     Route::post('/upload', [MediaController::class, 'upload']);
 
+    //=============== Muscles ===============
+    Route::apiResource('/muscles', MuscleController::class)->only('index');
+
+    //=============== Equipments ===============
+    Route::apiResource('/equipments', EquipmentController::class)->only('index');
+
     //=============== Exercise ===============
     Route::get('/exercises/group_tags', [ExerciseController::class, 'getGroupTags']);
     Route::post('/exercises/search', [ExerciseController::class, 'search']);
@@ -38,4 +47,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=============== Users ===============
     Route::get('/users/search/{keyword}', [UserController::class, 'search']);
+
+    //=============== Profile ===============
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::post('/profile', [ProfileController::class, 'update']);
+    Route::post('/request-became-pt', [ProfileController::class, 'requestBecomePersonalTrainer']);
+
+    //=============== Others ===============
+    Route::get('/certificate-issuers', [ProfileController::class, 'getCertificateIssuers']);
+    Route::get('/techniques', [ProfileController::class, 'getTechniques']);
 });
