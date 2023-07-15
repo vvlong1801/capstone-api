@@ -66,11 +66,6 @@ class Exercise extends Model
     {
         $user =  $this->belongsTo(User::class, 'created_by');
         return $user;
-        // if ($user->first()->belongsRoles([Role::admin, Role::creator, Role::superAdmin])) {
-        //     return $user;
-        // } else {
-        //     throw new Exception("user created this exercise who isn't creator", 1);
-        // }
     }
 
     public function sessionExercises()

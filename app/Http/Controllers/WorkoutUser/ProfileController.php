@@ -50,7 +50,7 @@ class ProfileController extends Controller
     {
         $payload = $request->validated();
         try {
-            $profile = $this->profileService->updateProfile($id, $payload);
+            $profile = $this->profileService->updateWorkoutUserProfile($id, $payload);
             return $this->responseOk(new ProfileResource($profile), 'update profile success');
         } catch (\Throwable $th) {
             return $this->responseFailed('update failed');

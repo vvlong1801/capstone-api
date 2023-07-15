@@ -10,8 +10,6 @@ use App\Http\Resources\UserResource;
 use App\Services\Interfaces\UserServiceInterface;
 use Illuminate\Auth\Events\Registered;
 
-
-
 class AuthController extends BaseAuthController
 {
     public function login(LoginRequest $request)

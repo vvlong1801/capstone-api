@@ -20,7 +20,7 @@ class AuthController extends BaseAuthController
 
         try {
             $user = $this->authService->authenticate($payload, Role::workoutUser);
-            $profile = $profileService->getProfileByUserId($user->id);
+            $profile = $profileService->getProfileWorkoutUserByUserId($user->id);
         } catch (\Throwable $th) {
             abort(500, $th->getMessage());
             // return $this->responseFailed($th->getMessage());

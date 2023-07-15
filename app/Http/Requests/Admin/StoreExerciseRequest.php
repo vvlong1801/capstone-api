@@ -44,7 +44,7 @@ class StoreExerciseRequest extends FormRequest
             'gif.path' => 'required',
             'image.filename' => 'required',
             'image.path' => 'required',
-            'youtube_url' => 'string',
+            'youtube_url' => '',
         ];
     }
 }

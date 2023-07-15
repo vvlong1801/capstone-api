@@ -23,9 +23,12 @@ return new class extends Migration
             $table->integer('type')->default(1)->comment('1: fixed');
             $table->integer('max_members')->default(-1)->comment('-1: non-limited');
             $table->integer('level')->nullable();
+            $table->integer('for_gender')->default(3);
             $table->string('youtube_url')->nullable();
             $table->boolean('accept_all')->default(true);
             $table->boolean('public')->default(true);
+            $table->integer("rate")->default(0);
+            $table->integer("num_rate")->default(0);
             $table->integer('status')->default(0)->comment('0: init, 1: waiting, 2: running, 3: finish, 4:paused, 5:cancel');
             $table->dateTime('approved_at')->nullable();
             $table->dateTime('start_at')->nullable();

@@ -10,4 +10,6 @@ enum TypeTag: int
 
     case GroupExercise = 1;
     case ChallengeTag = 2;
+    case CreatorTechnique = 3;
+    case GoalTag = 4;
 }
