@@ -23,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
         Services\Interfaces\WorkoutServiceInterface::class => Services\WorkoutService::class,
         Services\Interfaces\ProfileServiceInterface::class => Services\ProfileService::class,
         Services\Interfaces\DashboardServiceInterface::class => Services\DashboardService::class,
+        Services\Interfaces\RecommendServiceInterface::class => Services\RecommendService::class,
     ];
     /**
      * Register any application services.
