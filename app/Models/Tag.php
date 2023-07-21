@@ -6,6 +6,7 @@ use App\Enums\TypeTag;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Tag extends Model
 {
@@ -24,7 +25,7 @@ class Tag extends Model
         TypeTag $type,
         array $data
     ) {
-        $tags = \Arr::map($data, function ($item) use ($type, $data) {
+        $tags = Arr::map($data, function ($item) use ($type, $data) {
             $item['type'] = $type->value;
             $item['created_by'] = request()->user()->id;
             return $item;

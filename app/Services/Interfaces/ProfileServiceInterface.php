@@ -8,7 +8,7 @@ interface ProfileServiceInterface
     public function getCertificateIssuers();
     public function updateWorkoutUserProfile($id, $payload);
     public function updateCreatorProfile($id, $payload);
-    public function updateFullCreatorProfile($id, $payload);
+    public function updatePersonalTrainerProfile($id, $payload);
     public function getProfileWorkoutUserByUserId($userId);
     public function getProfileCreatorByUserId($userId);
 }

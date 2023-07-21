@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\Challenge;
+use App\Models\Creator;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,27 +11,17 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NewChallengeEvent implements ShouldBroadcast
+class NewPersonalTrainerEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * The order instance.
-     *
-     * @var \App\Challenge
-     */
-    public $challengeId;
-    public $challengeName;
-    public $createdBy;
-
+    public $creator;
     /**
      * Create a new event instance.
      */
-    public function __construct(Challenge $challenge)
+    public function __construct(Creator $creator)
     {
-        $this->challengeId = $challenge->id;
-        $this->challengeName = $challenge->name;
-        $this->createdBy = $challenge->createdBy->name;
+        $this->creator = $creator;
     }
 
     /**
@@ -42,10 +32,10 @@ class NewChallengeEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('new-challenge'),
+            new PrivateChannel('new-personal-trainer'),
         ];
     }
-    
+
     /**
      * Get the data to broadcast.
      *
@@ -53,6 +43,6 @@ class NewChallengeEvent implements ShouldBroadcast
      */
     public function broadcastWith(): array
     {
-        return ['id' => $this->challengeId, 'createdBy' => $this->createdBy, 'name' => $this->challengeName];
+        return ['id' => $this->creator->user->id, 'title' => 'New Personal Trainer','message' => $this->creator->user->name. ' requested to became PT'];
     }
 }

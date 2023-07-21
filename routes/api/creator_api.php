@@ -49,7 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users/search/{keyword}', [UserController::class, 'search']);
 
     //=============== Profile ===============
-    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::get('/profile', [ProfileController::class, 'index']);
     Route::post('/profile', [ProfileController::class, 'update']);
     Route::post('/request-became-pt', [ProfileController::class, 'requestBecomePersonalTrainer']);
 

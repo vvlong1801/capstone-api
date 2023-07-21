@@ -21,3 +21,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('new-challenge', function ($user) {
     return $user->isSuperAdmin;
 });
+
+Broadcast::channel('new-personal-trainer', function ($user) {
+    return $user->isSuperAdmin;
+});

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Creator;
+namespace App\Http\Resources\Admin;
 
 use App\Http\Resources\CertificateIssuerResource;
 use App\Http\Resources\MediaResource;
@@ -9,7 +9,7 @@ use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProfileResource extends JsonResource
+class PersonalTrainerResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -19,6 +19,7 @@ class ProfileResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            "id" => $this->id,
             "user" => new UserResource($this->user),
             "age" => $this->age,
             "youtube" => $this->youtube,
@@ -33,9 +34,11 @@ class ProfileResource extends JsonResource
             "introduce" => $this->introduce,
             "gender" => $this->gender?->name,
             "zalo" => $this->zalo,
-            "verified_pt" => $this->verified_at != null,
             "rate" => $this->rate,
             "num_rate" => $this->num_rate,
+            'members' => $this->members,
+            'challenges' => $this->challenges,
+            'verified_at' => \Carbon\Carbon::parse($this->verified_at)->format('d/m/Y'),
         ];
     }
 }

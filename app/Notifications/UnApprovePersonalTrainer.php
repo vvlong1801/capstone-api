@@ -2,26 +2,24 @@
 
 namespace App\Notifications;
 
-use App\Models\Challenge;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ApproveChallenge extends Notification
+class UnApprovePersonalTrainer extends Notification
 {
     use Queueable;
 
-    public $challenge;
-    public $approve;
+    public $message;
+
     /**
      * Create a new notification instance.
      */
-    public function __construct(Challenge $challenge, $approve)
+    public function __construct($message)
     {
-        $this->challenge = $challenge;
-        $this->approve = $approve;
+        $this->message = $message;
     }
 
     /**
@@ -31,7 +29,18 @@ class ApproveChallenge extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['broadcast', 'database'];
+        return ['broadcast'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
     }
 
     /**
@@ -42,10 +51,9 @@ class ApproveChallenge extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'challenge_id' => $this->challenge->id,
-            'challenge_name' => $this->challenge->name,
-            'approve' => $this->approve,
-            'message' => $this->approve ? 'your challenge approved' : 'your challenge unapproved, Please check the email for the reason'
+            'severity' => 'danger',
+            'summary' => 'Verify Personal Trainer Request',
+            'detail' => 'Your personal trainer request has been un accepted, please check mail to know reason',
         ];
     }
 
@@ -55,9 +63,9 @@ class ApproveChallenge extends Notification
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         return new BroadcastMessage([
-            'severity' => 'success',
-            'summary' => 'Verify Challenge',
-            'detail' => 'Your ' . $this->challenge->name . ' has been accepted',
+            'severity' => 'warn',
+            'summary' => 'Verify Personal Trainer Request',
+            'detail' => 'Your personal trainer request has been un accepted, please check mail to know reason',
         ]);
     }
 }

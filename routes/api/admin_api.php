@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\CreatorController;
 use App\Http\Controllers\Admin\EquipmentController;
 use App\Http\Controllers\Admin\ExerciseController;
 use App\Http\Controllers\Admin\MuscleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\AdminCreatorController;
 use App\Http\Controllers\Creator\ChallengeController;
 use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;
@@ -55,14 +57,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users/search/{keyword}', [UserController::class, 'search']);
     Route::apiResource('/users', UserController::class);
 
+    //=============== Users ===============
+    Route::get('/creators/pts', [CreatorController::class, 'getPersonalTrainers']);
+    Route::get('/creators/pts/{id}', [CreatorController::class, 'showPersonalTrainer']);
+    Route::get('/creators/request-pt', [CreatorController::class, 'getRequestPT']);
+    Route::get('/creators/request-pt/{id}', [CreatorController::class, 'showRequest']);
+    Route::put('/creators/request-pt/{id}/verify', [CreatorController::class, 'verifyPersonalTrainer']);
+    Route::apiResource('/creators', CreatorController::class)->except(['update']);
+
     //=============== Dashboard ===============
-    // Route::get('/dashboard/top-month/users', [DashboardController::class, 'newMembers']);
-    // Route::get('/dashboard/top-month/challenges', [DashboardController::class, 'newChallenges']);
-    // Route::get('/dashboard/top/challenges', [DashboardController::class, 'topChallenges']);
-    // Route::get('/dashboard/users', [DashboardController::class, 'getMembers']);
-    // Route::get('/dashboard/challenges', [DashboardController::class, 'getChallenges']);
-    // Route::get('/dashboard/challenges/{id}/members', [DashboardController::class, 'getMembersOfChallenge']);
-    // Route::get('/dashboard/overview', [DashboardController::class, 'getOverview']);
-    // Route::get('/dashboard/top-creators', [DashboardController::class, 'topCreators']);
     Route::get('/analysis', [DashboardController::class, 'analysis']);
 });
