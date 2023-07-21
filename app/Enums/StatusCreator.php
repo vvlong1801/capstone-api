@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum StatusCreator: int
 {
-    case waitingApprove = 1;
-    case approved = 2;
+    case none = 1;
+    case request = 2;
+    case block = 3;
 }

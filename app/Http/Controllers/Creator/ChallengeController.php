@@ -19,6 +19,7 @@ use App\Notifications\NewChallengeNotification;
 use App\Services\Interfaces\ChallengeInvitationServiceInterface;
 use App\Services\Interfaces\ChallengeServiceInterface;
 use App\Services\Interfaces\MediaServiceInterface;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Notification;
 
 class ChallengeController extends Controller
@@ -57,7 +58,7 @@ class ChallengeController extends Controller
         $payload = $request->validated();
 
         try {
-            $payload['images'] = \Arr::map($payload['images'], function ($image) use ($mediaService) {
+            $payload['images'] = Arr::map($payload['images'], function ($image) use ($mediaService) {
                 return $mediaService->createMedia($image, MediaCollection::Challenge);
             });
 
@@ -121,7 +122,7 @@ class ChallengeController extends Controller
         $payload = $request->validated();
 
         try {
-            $payload['images'] = \Arr::map($payload['images'], function ($image) use ($mediaService) {
+            $payload['images'] = Arr::map($payload['images'], function ($image) use ($mediaService) {
                 return $mediaService->updateMedia($image, MediaCollection::Challenge);
             });
             $this->challengeService->updateChallengeInformation($id, $payload);

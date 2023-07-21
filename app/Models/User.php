@@ -7,6 +7,7 @@ use App\Models\Traits\HasPermissions;
 use App\Models\Traits\HasRoles;
 use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail as AuthMustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -82,6 +83,11 @@ class User extends Authenticatable implements AuthMustVerifyEmail
 
     public function challenges()
     {
-        return $this->hasMany(Challenge::class);
+        return $this->hasMany(Challenge::class, 'created_by');
+    }
+
+    public function exercises()
+    {
+        return $this->hasMany(Exercise::class, 'created_by');
     }
 }

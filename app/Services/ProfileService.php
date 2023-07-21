@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\Gender;
 use App\Enums\LevelWorkoutUser;
+use App\Enums\StatusCreator;
 use App\Enums\TypeWorkCreator;
 use App\Models\CertificateIssuer;
 use App\Models\Creator;
@@ -87,12 +88,14 @@ class ProfileService extends BaseService implements ProfileServiceInterface
         }
     }
 
-    public function updateFullCreatorProfile($id, $payload)
+    public function updatePersonalTrainerProfile($id, $payload)
     {
         DB::beginTransaction();
         $payload['user']['first_login'] = false;
         $payload['work_type'] = TypeWorkCreator::fromName($payload['work_type']);
         $payload['certificate_issuer_id'] = $payload['certificate_issuer'];
+        $payload['status'] = StatusCreator::request;
+
         try {
             $payload['gender'] = $payload['gender'] ? Gender::fromName($payload['gender']) : null;
             $user = User::find($id);
@@ -108,16 +111,17 @@ class ProfileService extends BaseService implements ProfileServiceInterface
             }
 
             if (count($payload['workout_training_media'])) {
-                $user->creator->workoutTrainingMedia()->saveMany(\Arr::where($payload['workout_training_media'], function ($img) {
+                $user->creator->workoutTrainingMedia()->saveMany(Arr::where($payload['workout_training_media'], function ($img) {
                     return $img !== null;
                 }));
             }
 
             $user->update(Arr::only($payload['user'], ['name', 'phone_number', 'first_login']));
 
-            $user->creator()->update(Arr::only($payload, ['age', 'gender', 'address', 'facebook', 'certificate_issuer_id', 'work_type', 'desired_salary', 'introduce', 'youtube', 'zalo']));
+            $user->creator()->update(Arr::only($payload, ['age', 'gender', 'address', 'facebook', 'certificate_issuer_id', 'work_type', 'desired_salary', 'introduce', 'youtube', 'zalo', 'status']));
             $user->creator->techniques()->sync($payload['techniques']);
             DB::commit();
+            return $user->creator;
         } catch (\Throwable $th) {
             DB::rollback();
             throw $th;

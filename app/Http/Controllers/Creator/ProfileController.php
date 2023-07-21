@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Creator;
 
 use App\Enums\MediaCollection;
 use App\Enums\TypeTag;
+use App\Events\NewPersonalTrainerEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Creator\BecamePersonalTrainerRequest;
 use App\Http\Requests\Creator\StoreProfileRequest;
@@ -13,7 +14,7 @@ use App\Http\Resources\TagResource;
 use App\Models\Tag;
 use App\Services\Interfaces\MediaServiceInterface;
 use App\Services\Interfaces\ProfileServiceInterface;
-use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
@@ -29,7 +30,8 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        //
+        $profile = $this->profileService->getProfileCreatorByUserId(Auth::user()->id);
+        return $this->responseOk(new ProfileResource($profile));
     }
 
     /**
@@ -46,14 +48,17 @@ class ProfileController extends Controller
             if ($payload['certificate']) {
                 $payload['certificate'] = $mediaService->updateMedia($payload['certificate'], MediaCollection::PersonalTrainerCertificate);
             }
+
             if (count($payload['workout_training_media'])) {
-                $payload['workout_training_media'] = \Arr::map($payload['workout_training_media'], function ($image) use ($mediaService) {
+                $payload['workout_training_media'] = Arr::map($payload['workout_training_media'], function ($image) use ($mediaService) {
                     return $mediaService->updateMedia($image, MediaCollection::TrainingWorkout);
                 });
             }
 
-            $this->profileService->updateFullCreatorProfile(Auth::user()->id, $payload);
-            return $this->responseNoContent('profile updated');
+            $creator = $this->profileService->updatePersonalTrainerProfile(Auth::user()->id, $payload);
+
+            event(new NewPersonalTrainerEvent($creator));
+            return $this->responseNoContent('request was sended');
         } catch (\Throwable $th) {
             abort(404, $th->getMessage());
         }
