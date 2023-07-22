@@ -21,7 +21,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'role' => $this->account->role->name,
             'phone_number' => $this->whenNotNull($this->phone_number),
-            'avatar' => new MediaResource($this->whenLoaded('avatar')),
+            'avatar' => new MediaResource($this->avatar),
         ];
     }
 }

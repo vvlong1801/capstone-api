@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\CommonStatus;
+use App\Enums\Gender;
 use App\Enums\Level;
 use App\Enums\RoleChallenge;
 use App\Enums\RoleMemberChallenge;
@@ -28,6 +29,7 @@ class Challenge extends Model
         'status' => StatusChallenge::class,
         'type' => TypeChallenge::class,
         'level' => Level::class,
+        'for_gender' => Gender::class,
         'start_at' => 'datetime',
         'finish_at' => 'datetime',
         // 'paused_at' => 'datetime',

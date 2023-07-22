@@ -6,9 +6,7 @@ use App\Http\Controllers\WorkoutUser\ChallengeController;
 use App\Http\Controllers\WorkoutUser\PlanController;
 use App\Http\Controllers\WorkoutUser\ProfileController;
 use App\Http\Controllers\WorkoutUser\WorkoutController;
-use App\Models\Challenge;
 use Illuminate\Support\Facades\Route;
-use Symfony\Component\HttpKernel\Profiler\Profile;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/upload', [MediaController::class, 'upload']);
 
     //=============== Challenge ===============
+    Route::get('/challenges/invitations', [ChallengeController::class, 'getChallengeInvitations']);
+    Route::get('/challenges/invitations/accept/{id}', [ChallengeController::class, 'acceptInvitation']);
     Route::get('/challenges/join/{id}', [ChallengeController::class, 'join']);
     Route::apiResource('/challenges', ChallengeController::class);
 

@@ -8,7 +8,6 @@ use App\Http\Controllers\Admin\MuscleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TagController;
-use App\Http\Controllers\AdminCreatorController;
 use App\Http\Controllers\Creator\ChallengeController;
 use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;

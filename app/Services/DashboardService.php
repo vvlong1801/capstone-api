@@ -72,7 +72,7 @@ class DashboardService extends BaseService implements DashboardServiceInterface
 
     public function countCreators()
     {
-        return Creator::where('status', 2)->count();
+        return Creator::all()->count();
     }
 
     public function countChallenges()

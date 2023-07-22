@@ -4,17 +4,23 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ConfirmChallengeRequest;
+use App\Http\Requests\Admin\ConfirmNewChallengeRequest;
 use App\Models\Challenge;
+use App\Notifications\ApproveChallenge;
+use App\Services\Interfaces\ChallengeInvitationServiceInterface;
 use App\Services\Interfaces\ChallengeServiceInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class ChallengeController extends Controller
 {
     protected $challengeService;
+    protected $challengeInvitationService;
 
-    public function __construct(ChallengeServiceInterface $challengeService)
+    public function __construct(ChallengeServiceInterface $challengeService, ChallengeInvitationServiceInterface $challengeInvitationService)
     {
         $this->challengeService = $challengeService;
+        $this->challengeInvitationService = $challengeInvitationService;
     }
 
     /**
@@ -28,20 +34,29 @@ class ChallengeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function confirmChallenge($id, ConfirmChallengeRequest $request)
+    public function confirmNewChallenge($id, ConfirmNewChallengeRequest $request)
     {
-        // change status init -> waiting/running
         $payload = $request->validated();
 
-        if ($payload['approve']) {
-            $challenge = Challenge::find($id);
-            // start_at > now -> status = waiting
-            // finish_at > now > start_at -> status = running
-            // now > finish -> status = cancel
+        try {
+            if ($payload['approve']) {
+                $challenge = $this->challengeService->approveChallenge($id);
+                //notify invitation
+                $invitations = $this->challengeInvitationService->getInvitationByChallengeId($id);
+                // Notification::send()
+                // foreach ($invitations as $key => $invitation) {
+                //     Notification::send($invitation->user, new InviteJoinChallenge($invitation, true));
+                // }
+                //notify creator
+                Notification::send($challenge->createdBy, new ApproveChallenge($challenge, true));
+            } else {
+                $challenge = Challenge::find($id);
+                Notification::send($challenge->createdBy, new ApproveChallenge($challenge, false));
+            }
+            return $this->responseNoContent('confirm success');
+        } catch (\Throwable $th) {
+            throw $th;
         }
-        // send notify result to creator
-        // send mail if approve = false
-        // send invitation to user
     }
 
     /**

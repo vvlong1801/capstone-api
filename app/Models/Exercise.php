@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Gender;
 use App\Enums\Level;
 use App\Enums\RequirementUnit;
 use App\Enums\Role;
@@ -21,6 +22,7 @@ class Exercise extends Model
     //==========================================
     protected $casts = [
         "requirement_unit" => RequirementUnit::class,
+        "for_gender" => Gender::class,
     ];
     public function level(): Attribute
     {

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Gender;
 use App\Enums\StatusChallenge;
 use App\Enums\TypeTag;
 use App\Models\Challenge;
@@ -121,10 +122,11 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
             // init challenge
             $payload['start_at'] = \Carbon\Carbon::parse($payload['start_at'])->toDateTimeString();
             $payload['finish_at'] = \Carbon\Carbon::parse($payload['finish_at'])->toDateTimeString();
+            $payload['for_gender'] = Gender::fromName($payload['for_gender']);
 
             $challenge = new Challenge(\Arr::only($payload, [
                 'name', 'description', 'sort_desc', 'max_members',
-                'sort_desc', 'accept_all', 'public',
+                'sort_desc', 'accept_all', 'public','for_gender',
                 'created_by', 'start_at', 'finish_at', 'youtube_url'
             ]));
 
@@ -222,11 +224,12 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
             // init challenge
             $payload['start_at'] = \Carbon\Carbon::parse($payload['start_at'])->toDateTimeString();
             $payload['finish_at'] = \Carbon\Carbon::parse($payload['finish_at'])->toDateTimeString();
+            $payload['for_gender'] = Gender::fromName($payload['for_gender']);
 
             $challenge = Challenge::find($id);
             $challenge->fill(\Arr::only($payload, [
                 'name', 'description', 'sort_desc', 'max_members',
-                'sort_desc', 'accept_all', 'public',
+                'sort_desc', 'accept_all', 'public','for_gender',
                 'start_at', 'finish_at', 'youtube_url'
             ]));
             $challenge->save();

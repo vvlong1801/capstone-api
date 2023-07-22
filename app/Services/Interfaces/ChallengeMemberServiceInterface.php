@@ -6,5 +6,5 @@ use App\Models\Challenge;
 
 interface ChallengeMemberServiceInterface
 {
-    public function createChallengeMember($id);
+    public function createChallengeMember($userId,$challengeId);
 }

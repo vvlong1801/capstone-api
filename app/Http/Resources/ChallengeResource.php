@@ -29,6 +29,7 @@ class ChallengeResource extends JsonResource
             'status' => $this->status->name,
             // 'level' => $this->whenNotNull($this->level),
             'level' => $this->level?->name,
+            'for_gender' => $this->for_gender?->name,
             'start_at' => $this->whenNotNull($this->start_at),
             'finish_at' => $this->whenNotNull($this->finish_at),
             'youtube_url' => $this->whenNotNull($this->youtube_url),

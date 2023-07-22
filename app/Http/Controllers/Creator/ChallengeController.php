@@ -12,6 +12,7 @@ use App\Http\Resources\ChallengePhaseResource;
 use App\Http\Resources\ChallengeResource;
 use App\Http\Resources\TagResource;
 use App\Models\Challenge;
+use App\Models\ChallengeInvitation;
 use App\Models\ChallengePhase;
 use App\Notifications\ApproveChallenge;
 use App\Notifications\InviteJoinChallenge;
@@ -20,6 +21,7 @@ use App\Services\Interfaces\ChallengeInvitationServiceInterface;
 use App\Services\Interfaces\ChallengeServiceInterface;
 use App\Services\Interfaces\MediaServiceInterface;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 
 class ChallengeController extends Controller
