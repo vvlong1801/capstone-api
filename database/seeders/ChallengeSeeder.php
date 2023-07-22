@@ -13,6 +13,7 @@ use App\Supports\Helper;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ChallengeSeeder extends Seeder
 {
@@ -23,6 +24,9 @@ class ChallengeSeeder extends Seeder
      */
     public function run()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Challenge::truncate();
+
         $challenges = Challenge::factory()->count(3)
             ->sequence(fn (Sequence $sequence) => [
                 'created_by' => $sequence->index + 1
@@ -41,5 +45,7 @@ class ChallengeSeeder extends Seeder
                 ]), 'exercises')
                 ->create();
         }
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

@@ -11,6 +11,7 @@ use App\Models\WorkoutUser;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UserSeeder extends Seeder
 {
@@ -21,6 +22,9 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        User::truncate();
+
         $superAdmin = User::factory()->count(1)->state([
             'name' => 'admin',
             'email' => 'superAdmin@admin.com',
@@ -32,5 +36,7 @@ class UserSeeder extends Seeder
         ])->for(Account::factory()->state(['role' => Role::admin]))->create();
 
         $this->call([CreatorSeeder::class, WorkoutUserSeeder::class]);
+        
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

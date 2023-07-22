@@ -18,7 +18,7 @@ class CreatorFactory extends Factory
     public function definition(): array
     {
         return [
-            'status' => StatusCreator::approved,
+            'status' => StatusCreator::request,
         ];
     }
 }

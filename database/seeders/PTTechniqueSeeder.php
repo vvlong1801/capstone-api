@@ -6,6 +6,7 @@ use App\Enums\TypeTag;
 use App\Models\Tag;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class PTTechniqueSeeder extends Seeder
 {
@@ -14,6 +15,9 @@ class PTTechniqueSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Tag::truncate();
+
         for ($i = 1; $i < 4; $i++) {
             Tag::create([
                 'name' => 'technique ' . $i,
@@ -21,5 +25,7 @@ class PTTechniqueSeeder extends Seeder
                 'created_by' => 1,
             ]);
         }
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Account;
 use App\Models\Creator;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class CreatorSeeder extends Seeder
 {
@@ -15,6 +16,9 @@ class CreatorSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Creator::truncate();
+
         $creator = Creator::factory()->for(
             User::factory()->state([
                 'name' => 'creator',
@@ -23,5 +27,7 @@ class CreatorSeeder extends Seeder
                 Account::factory()->state(['role' => Role::creator])
             )
         )->create();
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

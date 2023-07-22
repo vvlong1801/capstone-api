@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\PersonalTrainer;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class PersonalTrainerSeeder extends Seeder
 {
@@ -13,6 +14,9 @@ class PersonalTrainerSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        PersonalTrainer::truncate();
+
         for ($i = 1; $i < 5; $i++) {
             $certificate = $i % 3 == 0;
             $issuer = $i % 3 + 1;
@@ -25,5 +29,7 @@ class PersonalTrainerSeeder extends Seeder
                 'verified_at' => \Carbon\Carbon::now(),
             ]);
         }
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }
