@@ -9,4 +9,5 @@ enum Gender: int
     use Helper;
     case male = 1;
     case female = 2;
+    case all = 3;
 }

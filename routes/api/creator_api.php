@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\EquipmentController;
 use App\Http\Controllers\Admin\ExerciseController;
 use App\Http\Controllers\Admin\MuscleController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Creator\AuthController;
 use App\Http\Controllers\Creator\ChallengeController;
 use App\Http\Controllers\Creator\ProfileController;

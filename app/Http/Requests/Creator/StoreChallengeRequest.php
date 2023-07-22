@@ -24,6 +24,7 @@ class StoreChallengeRequest extends FormRequest
         return [
             'name' => 'required',
             'sort_desc' => 'required',
+            'for_gender' => 'required',
             'description' => 'required',
             'create_group' => 'boolean',
             'images' => 'array|required',

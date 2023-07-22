@@ -73,4 +73,11 @@ class Creator extends Model
             return $members;
         });
     }
+
+    public function isPT(): Attribute
+    {
+        return Attribute::make(get: function () {
+            return $this->verified_at != null;
+        });
+    }
 }

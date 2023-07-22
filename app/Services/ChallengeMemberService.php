@@ -2,23 +2,27 @@
 
 namespace App\Services;
 
+use App\Enums\RoleChallenge;
 use App\Models\Challenge;
+use App\Models\ChallengeInvitation;
 use App\Services\Interfaces\ChallengeMemberServiceInterface;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ChallengeMemberService extends BaseService implements ChallengeMemberServiceInterface
 {
-    public function createChallengeMember($id){
+    public function createChallengeMember($userId, $challengeId)
+    {
         // check accept rule of challenge
-        \DB::beginTransaction();
-
+        DB::beginTransaction();
         try {
-            $challenge = Challenge::find($id);
-            $challenge->members()->syncWithoutDetaching([Auth::user()->id, ['status' => $challenge->accept_all]]);
-            \DB::commit();
-            return $challenge->accept_all;
+            $challenge = Challenge::find($challengeId);
+            $existedInvitation = ChallengeInvitation::where('challenge_id', $challengeId)->where('user_id', $userId)->count();
+            $status = $existedInvitation || $challenge->accept_all;
+            DB::table('challenge_members')->insert(['challenge_id' => $challengeId, 'user_id' => $userId, 'status' => $status, 'role' => RoleChallenge::member]);
+            DB::commit();
+            return $status;
         } catch (\Throwable $th) {
-            \DB::rollback();
+            DB::rollback();
             throw $th;
         }
     }

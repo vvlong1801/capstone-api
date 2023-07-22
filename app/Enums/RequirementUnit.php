@@ -9,6 +9,6 @@ enum RequirementUnit: string
     use Helper;
 
     case reps = "reps";
-    case times = "times";
+    case seconds = "seconds";
     case meters = "meters";
 }

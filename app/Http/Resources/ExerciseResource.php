@@ -19,6 +19,7 @@ class ExerciseResource extends JsonResource
             "name" => $this->name,
             "level" => $this->level,
             "type" => $this->type,
+            "for_gender" => $this->for_gender->name,
             "created_by" =>  $this->createdBy->name,
             "group_tags" => TagResource::collection($this->groupTags),
 

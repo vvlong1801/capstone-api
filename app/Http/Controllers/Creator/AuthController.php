@@ -18,15 +18,20 @@ class AuthController extends BaseAuthController
 
         try {
             $user = $this->authService->authenticate($payload, Role::creator);
+            $response = [
+                'access_token' => $user->createToken('auth_token')->plainTextToken,
+                'token_type' => 'Bearer',
+                'user_info' => new UserResource($user),
+            ];
+            if ($user->account->role == Role::creator) {
+                $response = \Arr::add($response, 'creator_info', [
+                    'is_PT' => $user->creator->isPT,
+                    'rate' => $user->creator->rate,
+                ]);
+            }
         } catch (\Throwable $th) {
             throw $th;
         }
-
-        $response = [
-            'access_token' => $user->createToken('auth_token')->plainTextToken,
-            'token_type' => 'Bearer',
-            'user_info' => new UserResource($user),
-        ];
 
         return $this->responseOk($response, "login success");
     }

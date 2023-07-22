@@ -33,6 +33,7 @@ class StoreExerciseRequest extends FormRequest
         return [
             'name' => 'required',
             'level' => 'required',
+            'for_gender' => 'required',
             'type' => '',
             'requirement_unit' => 'required',
             'requirement_initial' => 'required',

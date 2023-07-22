@@ -2,17 +2,21 @@
 
 namespace App\Services;
 
+use App\Enums\Gender;
 use App\Enums\TypeTag;
 use App\Models\Exercise;
 use App\Models\Tag;
 use App\Services\Interfaces\ExerciseServiceInterface;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class ExerciseService extends BaseService implements ExerciseServiceInterface
 {
     public function getExercises()
     {
-        return Exercise::with(['groupTags', 'createdBy', 'image'])->get();
+        return Exercise::with(['groupTags', 'createdBy', 'image'])->when(Auth::user()->isCreator, function ($query) {
+            $query->where('created_by', 1)->orWhere('created_by', Auth::user()->id);
+        })->get();  
     }
 
     public function getGroupTags()
@@ -61,8 +65,9 @@ class ExerciseService extends BaseService implements ExerciseServiceInterface
     {
         \DB::beginTransaction();
         try {
+            $payload['for_gender'] = Gender::fromName($payload['for_gender']);
             // insert exercise info
-            $exercise = Exercise::create(\Arr::only($payload, ['name', 'level', 'created_by', 'requirement_unit', 'requirement_initial', 'equipment_id', 'description', 'youtube_url']));
+            $exercise = Exercise::create(\Arr::only($payload, ['name', 'level', 'for_gender', 'created_by', 'requirement_unit', 'requirement_initial', 'equipment_id', 'description', 'youtube_url']));
             $exercise->muscles()->attach($payload['muscles']);
 
             // insert media of exercise
@@ -84,12 +89,13 @@ class ExerciseService extends BaseService implements ExerciseServiceInterface
 
     public function updateExercise($id, array $payload)
     {
+        $payload['for_gender'] = Gender::fromName($payload['for_gender']);
         \DB::beginTransaction();
         try {
             $exercise = Exercise::findOrFail($id);
             $exercise->muscles()->sync(\Arr::get($payload, 'muscles', []));
 
-            $exercise->update(\Arr::only($payload, ['name', 'level', 'created_by', 'requirement_unit', 'requirement_initial', 'equipment_id', 'description', 'youtube_url']));
+            $exercise->update(\Arr::only($payload, ['name', 'level', 'for_gender', 'created_by', 'requirement_unit', 'requirement_initial', 'equipment_id', 'description', 'youtube_url']));
 
             if ($gif = $payload['gif']) {
                 $exercise->gif()->update($gif->getAttributes());
