@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 //=============== Auth ===============
+Route::get('/test', function () {
+    return 'ok';
+});
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
