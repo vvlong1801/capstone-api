@@ -2,14 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\MediaCollection;
+use App\Events\NewChallengeEvent;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\ConfirmChallengeRequest;
 use App\Http\Requests\Admin\ConfirmNewChallengeRequest;
+use App\Http\Requests\Creator\StoreChallengeRequest;
+use App\Http\Requests\UpdateChallengeInformationRequest;
+use App\Http\Resources\ChallengePhaseResource;
+use App\Http\Resources\TagResource;
+use App\Http\Resources\WorkoutUSer\ChallengeResource;
 use App\Models\Challenge;
 use App\Notifications\ApproveChallenge;
 use App\Services\Interfaces\ChallengeInvitationServiceInterface;
 use App\Services\Interfaces\ChallengeServiceInterface;
-use Illuminate\Http\Request;
+use App\Services\Interfaces\MediaServiceInterface;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Notification;
 
 class ChallengeController extends Controller
@@ -22,17 +29,49 @@ class ChallengeController extends Controller
         $this->challengeService = $challengeService;
         $this->challengeInvitationService = $challengeInvitationService;
     }
-
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $challenges = $this->challengeService->getChallenges();
+        return $this->responseOk(ChallengeResource::collection($challenges), 'get challenges is success');
+    }
+
+    /**
+     * Display a listing of the challengeTags.
+     */
+    public function getChallengeTags()
+    {
+        $challengeTags = $this->challengeService->getChallengeTags();
+        return $this->responseOk(TagResource::collection($challengeTags), 'get challenge tags is success');
     }
 
     /**
      * Store a newly created resource in storage.
+     */
+    public function store(StoreChallengeRequest $request, MediaServiceInterface $mediaService)
+    {
+        $payload = $request->validated();
+
+        try {
+            $payload['images'] = Arr::map($payload['images'], function ($image) use ($mediaService) {
+                return $mediaService->createMedia($image, MediaCollection::Challenge);
+            });
+
+            $payload['created_by'] = $request->user()->id;
+            $challenge = $this->challengeService->createChallenge($payload);
+            event(new NewChallengeEvent($challenge));
+            $this->challengeInvitationService->createInvitation($challenge, $payload['invitation']);
+
+            return $this->responseNoContent('your challenge created');
+        } catch (\Throwable $th) {
+            return $this->responseFailed($th->getMessage());
+        }
+    }
+
+    /**
+     * confirm a newly challenge.
      */
     public function confirmNewChallenge($id, ConfirmNewChallengeRequest $request)
     {
@@ -60,27 +99,35 @@ class ChallengeController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        //
+        $challenge = $this->challengeService->getChallengeById($id);
+        if (!$challenge) abort(404, 'not founded this challenge');
+
+        $template = $this->challengeService->getChallengeTemplateById($id);
+        $response = ['information' => (new ChallengeResource($challenge)), 'template' => ChallengePhaseResource::collection($template)];
+        return $this->responseOk($response, 'get challenge is success');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function updateBasicInformation($id, UpdateChallengeInformationRequest $request,  MediaServiceInterface $mediaService)
     {
-        //
+        $payload = $request->validated();
+
+        try {
+            $payload['images'] = Arr::map($payload['images'], function ($image) use ($mediaService) {
+                return $mediaService->updateMedia($image, MediaCollection::Challenge);
+            });
+            $this->challengeService->updateChallengeInformation($id, $payload);
+
+            return $this->responseNoContent('basic information of your challenge was updated');
+        } catch (\Throwable $th) {
+            return $this->responseFailed($th->getMessage());
+        }
     }
 
     /**
@@ -88,6 +135,7 @@ class ChallengeController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $result = $this->challengeService->deleteChallenge($id);
+        return $this->responseNoContent('challenge deleted');
     }
 }

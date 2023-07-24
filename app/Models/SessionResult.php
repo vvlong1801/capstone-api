@@ -19,4 +19,8 @@ class SessionResult extends Model
     public function phaseSession(){
         return $this->belongsTo(PhaseSession::class);
     }
+
+    public function feedbacks(){
+        return $this->morphMany(Message::class, 'messageable');
+    }
 }

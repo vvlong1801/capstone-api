@@ -43,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=============== Challenge ===============
     Route::get('/challenges/tags', [ChallengeController::class, 'getChallengeTags']);
+    Route::post('/challenges/request-join/confirm', [ChallengeController::class, 'confirmNewChallengeMember']);
     Route::put('/challenges/{id}/information', [ChallengeController::class, 'updateBasicInformation']);
     Route::apiResource('/challenges', ChallengeController::class);
 

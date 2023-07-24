@@ -2,9 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\Challenge;
+use App\Models\Message;
 use App\Models\PhaseSession;
+use App\Models\Plan;
 use App\Models\SessionResult;
 use App\Services\Interfaces\WorkoutServiceInterface;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class WorkoutService extends BaseService implements WorkoutServiceInterface
@@ -16,25 +21,39 @@ class WorkoutService extends BaseService implements WorkoutServiceInterface
 
         try {
 
-            $planSession = new SessionResult(\Arr::only($payload, [
+            $sessionResult = new SessionResult(Arr::only($payload, [
                 'plan_id', 'phase_session_id', 'calories_burned'
             ]));
+
             $duration = \Carbon\Carbon::parse($payload['duration'])->format('H:i:s');
-            $planSession->duration = $duration;
+            $sessionResult->duration = $duration;
+
             $orderPhaseSession = PhaseSession::whereId($payload["phase_session_id"])->value('order');
-            $currentSession = $planSession->plan->current_session;
+            $currentSession = Plan::whereId($payload['plan_id'])->value('current_session');
 
             // check complete challenge
-            if ($currentSession + 1 == $planSession->plan->challenge->total_days) {
-                $planSession->plan()->update(["completed_at" => \Carbon\Carbon::now()]);
+            if ($currentSession + 1 == $sessionResult->plan->challenge->total_days) {
+                $sessionResult->plan()->update(["completed_at" => \Carbon\Carbon::now()]);
             } else if ($currentSession == $orderPhaseSession) {
-                $planSession->plan()->update(["current_session" => $currentSession + 1]);
+                $sessionResult->plan()->update(["current_session" => $currentSession + 1]);
+            }
+            $sessionResult->save();
+
+            if (($feedback = Arr::get($payload, 'feedback')) != null) {
+                $message = Message::create(
+                    [
+                        'messageable_type' => SessionResult::class,
+                        'messageable_id' => $sessionResult->id,
+                        'from' => Auth::user()->id,
+                        'to' => Challenge::whereId($sessionResult->plan->challenge_id)->value('created_by'),
+                        'content' => $feedback,
+                    ]
+                );
             }
 
-            $planSession->save();
 
             DB::commit();
-            return $planSession;
+            return ['result' => $sessionResult, 'feedback' => $message];
         } catch (\Throwable $th) {
             DB::rollback();
             throw $th;

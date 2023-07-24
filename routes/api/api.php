@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/upload', [MediaController::class, 'upload']);
 
     //=============== Challenge ===============
+    Route::post('/challenges/rate', [ChallengeController::class, 'rate']);
     Route::get('/challenges/invitations', [ChallengeController::class, 'getChallengeInvitations']);
     Route::get('/challenges/invitations/accept/{id}', [ChallengeController::class, 'acceptInvitation']);
     Route::get('/challenges/join/{id}', [ChallengeController::class, 'join']);

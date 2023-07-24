@@ -36,6 +36,8 @@ class ChallengeResource extends JsonResource
             // 'phases' => ChallengePhaseResource::collection($this->whenLoaded('phases')),
             'images' => MediaResource::collection($this->whenLoaded('images')),
             'members_count' => $this->whenNotNull($this->members_count),
+            'rate' => $this->rateValue,
+            'num_rate' => $this->numRate,
         ];
     }
 }
