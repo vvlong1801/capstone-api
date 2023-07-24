@@ -3,13 +3,21 @@
 namespace App\Http\Controllers\WorkoutUser;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\WorkoutUser\RateChallengeRequest;
 use App\Http\Resources\ChallengeResource;
+use App\Models\Challenge;
+use App\Models\Message;
+use App\Models\Plan;
+use App\Models\Rating;
+use App\Notifications\FeedbackWorkout;
+use App\Notifications\NewChallengeMember;
+use App\Notifications\NewChallengeRating;
 use App\Services\Interfaces\ChallengeInvitationServiceInterface;
 use App\Services\Interfaces\ChallengeMemberServiceInterface;
 use App\Services\Interfaces\ChallengeServiceInterface;
 use App\Services\Interfaces\PlanServiceInterface;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class ChallengeController extends Controller
 {
@@ -45,13 +53,14 @@ class ChallengeController extends Controller
     {
         // create challenge member transaction with check accept rule
         try {
-            $status = $this->challengeMemberService->createChallengeMember(Auth::user()->id, $id);
-            if ($status) {
+            $challenge = $this->challengeMemberService->createChallengeMember(Auth::user()->id, $id);
+            if ($challenge->accept_all) {
                 $planService->createPlan($id);
                 // notify to creator of the challenge
                 $response = ['approved' => true];
             } else {
                 // notify to creator of the challenge
+                Notification::send($challenge->createdBy, new NewChallengeMember(Auth::user(), $challenge));
                 $response = ['approved' => false];
             }
 
@@ -76,13 +85,6 @@ class ChallengeController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
@@ -94,19 +96,30 @@ class ChallengeController extends Controller
         return $this->responseOk(new ChallengeResource($challenge), 'get challenge is success');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function rate(RateChallengeRequest $request)
     {
-        //
-    }
+        $payload = $request->validated();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $challenge = Plan::find($payload['plan_id'])->challenge;
+        // store rate & feedback of challenge
+        $rate = Rating::create([
+            'rateable_type' => Challenge::class,
+            'rateable_id' => $challenge->id,
+            'value' => $payload['rate'],
+            'user_id' => Auth::user()->id,
+        ]);
+
+        $message = Message::create([
+            'messageable_type' => Challenge::class,
+            'messageable_id' => $challenge->id,
+            'content' => $payload['feedback'],
+            'from' => Auth::user()->id,
+            'to' => $challenge->created_by,
+        ]);
+
+        Notification::send($challenge->createdBy, new NewChallengeRating($challenge, $rate));
+        Notification::send($challenge->createdBy, new FeedbackWorkout($message));
+
+        return $this->responseNoContent('success');
     }
 }

@@ -44,13 +44,27 @@ class Challenge extends Model
         );
     }
 
-    // protected function participant(): Attribute
-    // {
-    //     return Attribute::make(
-    //         set: fn ($name) => TypeParticipant::fromName(ucfirst($name)),
-    //         get: fn ($value) => TypeParticipant::fromValue($value),
-    //     );
-    // }
+    protected function numRate(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                return $this->ratings()->count();
+            },
+        );
+    }
+
+    protected function rateValue(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                $rate = 0.0;
+                if ($this->numRate) {
+                    $rate =  $this->ratings()->sum('value') / $this->numRate;
+                }
+                return floatval(number_format($rate, 1));
+            },
+        );
+    }
 
     // protected function memberCensorship(): Attribute
     // {
@@ -83,6 +97,16 @@ class Challenge extends Model
     public function images(): MorphMany
     {
         return $this->morphMany(Media::class, 'mediable');
+    }
+
+    public function feedbacks(): MorphMany
+    {
+        return $this->morphMany(Media::class, 'messageable');
+    }
+
+    public function ratings(): MorphMany
+    {
+        return $this->morphMany(Rating::class, 'rateable');
     }
 
     public function createdBy()

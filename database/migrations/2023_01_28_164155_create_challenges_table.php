@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('youtube_url')->nullable();
             $table->boolean('accept_all')->default(true);
             $table->boolean('public')->default(true);
-            $table->integer("rate")->default(0);
+            $table->double("rate")->default(0);
             $table->integer("num_rate")->default(0);
             $table->integer('status')->default(0)->comment('0: init, 1: waiting, 2: running, 3: finish, 4:paused, 5:cancel');
             $table->dateTime('approved_at')->nullable();

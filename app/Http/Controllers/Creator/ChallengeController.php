@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Creator;
 
 use App\Enums\MediaCollection;
+use App\Enums\StatusChallengeMember;
 use App\Events\NewChallengeEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ConfirmNewChallengeRequest;
+use App\Http\Requests\Creator\ConfirmNewChallengeMemberRequest;
 use App\Http\Requests\Creator\StoreChallengeRequest;
 use App\Http\Requests\UpdateChallengeInformationRequest;
 use App\Http\Resources\ChallengePhaseResource;
@@ -23,6 +25,7 @@ use App\Services\Interfaces\MediaServiceInterface;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Request;
 
 class ChallengeController extends Controller
 {
@@ -103,6 +106,15 @@ class ChallengeController extends Controller
         }
     }
 
+
+    public function confirmNewChallengeMember(ConfirmNewChallengeMemberRequest $request)
+    {
+        $payload = $request->validated();
+        DB::table('challenge_members')->where('user_id', $payload['member_id'])
+            ->where('challenge_id', $payload['challenge_id'])
+            ->update(['status' => $payload['accept'] ? StatusChallengeMember::approved : StatusChallengeMember::unApproved]);
+        return $this->responseNoContent('accept success');
+    }
     /**
      * Display the specified resource.
      */

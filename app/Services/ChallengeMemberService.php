@@ -20,7 +20,7 @@ class ChallengeMemberService extends BaseService implements ChallengeMemberServi
             $status = $existedInvitation || $challenge->accept_all;
             DB::table('challenge_members')->insert(['challenge_id' => $challengeId, 'user_id' => $userId, 'status' => $status, 'role' => RoleChallenge::member]);
             DB::commit();
-            return $status;
+            return $challenge;
         } catch (\Throwable $th) {
             DB::rollback();
             throw $th;

@@ -12,7 +12,9 @@ use App\Models\SessionExercise;
 use App\Models\Tag;
 use App\Services\Interfaces\ChallengeServiceInterface;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ChallengeService extends BaseService implements ChallengeServiceInterface
 {
@@ -52,27 +54,18 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
 
     public function createChallengeMember($id)
     {
-        // check accept rule of challenge
-        \DB::beginTransaction();
+        DB::beginTransaction();
 
         try {
             $challenge = Challenge::find($id);
             $challenge->members()->syncWithoutDetaching([Auth::user()->id, ['status' => $challenge->accept_all]]);
-            \DB::commit();
+            DB::commit();
             return $challenge->accept_all;
         } catch (\Throwable $th) {
-            \DB::rollback();
+            DB::rollback();
             throw $th;
         }
     }
-
-    // public function getChallengeStatistics($id)
-    // {
-    // }
-
-    // public function getChallengeFeedbacks($id)
-    // {
-    // }
 
     public function getChallengeTags()
     {
@@ -92,39 +85,34 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
                 $query->update(['status' => StatusChallenge::cancel]);
             });
 
-        //approve = true
-        //==notify creator
-
-        //==send invitation
-
     }
 
     public function approveChallenge($id)
     {
         $now = \Carbon\Carbon::now();
-        \DB::beginTransaction();
+        DB::beginTransaction();
         try {
             Challenge::whereId($id)->where('status', StatusChallenge::init)->update(['approved_at' => $now, 'status' => StatusChallenge::running]);
             // $query->whereDate('start_at', '>', $now)->update(['approved_at' => $now, 'status' => StatusChallenge::waiting]);
             // $query->whereDate('start_at', '<', $now)->whereDate('finish_at', '>', $now)->update(['approved_at' => $now, 'status' => StatusChallenge::running]);
-            \DB::commit();
+            DB::commit();
             return Challenge::find($id);
         } catch (\Throwable $th) {
-            \DB::rollback();
+            DB::rollback();
         }
     }
 
     public function createChallenge(array $payload)
     {
 
-        \DB::beginTransaction();
+        DB::beginTransaction();
         try {
             // init challenge
             $payload['start_at'] = \Carbon\Carbon::parse($payload['start_at'])->toDateTimeString();
             $payload['finish_at'] = \Carbon\Carbon::parse($payload['finish_at'])->toDateTimeString();
             $payload['for_gender'] = Gender::fromName($payload['for_gender']);
 
-            $challenge = new Challenge(\Arr::only($payload, [
+            $challenge = new Challenge(Arr::only($payload, [
                 'name', 'description', 'sort_desc', 'max_members',
                 'sort_desc', 'accept_all', 'public','for_gender',
                 'created_by', 'start_at', 'finish_at', 'youtube_url'
@@ -140,40 +128,16 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
             $challenge->tags()->attach($ids);
 
             // save template
-            $phases = \Arr::get($payload, 'template.phases', []);
+            $phases = Arr::get($payload, 'template.phases', []);
             $this->createChallengePhase($challenge, $phases);
 
-            // // save invitation
-            // $payload['invitation'] = \Arr::map($payload['invitation'], function ($item) {
-            //     $item['role'] = RoleChallenge::fromName(\Str::lower($item['role']));
-            //     $item['expires_at'] = Date::now()->addDay(3);
-            //     return $item;
-            // });
-            // $challenge->invitations()->createMany($payload['invitation']);
-            \DB::commit();
+            DB::commit();
             return $challenge;
         } catch (\Throwable $th) {
-            \DB::rollback();
+            DB::rollback();
             throw $th;
         }
     }
-
-    // public function createChallengeInvitation($challenge, $payload)
-    // {
-    //     \DB::beginTransaction();
-    //     try {
-    //         $invitations = \Arr::map($payload, function ($item) {
-    //             $item['role'] = RoleChallenge::fromName(\Str::lower($item['role']));
-    //             $item['expires_at'] = Date::now()->addDay(3);
-    //             return $item;
-    //         });
-    //         $result = $challenge->invitations()->createMany($invitations);
-    //         \DB::commit();
-    //     } catch (\Throwable $th) {
-    //         \DB::rollback();
-    //         throw $th;
-    //     }
-    // }
 
     private function createChallengePhase(Challenge $challenge, array $payload)
     {
@@ -182,7 +146,7 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
 
         foreach ($payload as $index => $data) {
             // init phase
-            $newPhase = new ChallengePhase(\Arr::only($data, [
+            $newPhase = new ChallengePhase(Arr::only($data, [
                 'name', 'total_days', 'note',
             ]));
             $newPhase->order = $index;
@@ -219,7 +183,7 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
 
     public function updateChallengeInformation($id, $payload)
     {
-        \DB::beginTransaction();
+        DB::beginTransaction();
         try {
             // init challenge
             $payload['start_at'] = \Carbon\Carbon::parse($payload['start_at'])->toDateTimeString();
@@ -227,7 +191,7 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
             $payload['for_gender'] = Gender::fromName($payload['for_gender']);
 
             $challenge = Challenge::find($id);
-            $challenge->fill(\Arr::only($payload, [
+            $challenge->fill(Arr::only($payload, [
                 'name', 'description', 'sort_desc', 'max_members',
                 'sort_desc', 'accept_all', 'public','for_gender',
                 'start_at', 'finish_at', 'youtube_url'
@@ -235,7 +199,7 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
             $challenge->save();
 
             // save media
-            $challenge->images()->saveMany(\Arr::where($payload['images'], function ($img) {
+            $challenge->images()->saveMany(Arr::where($payload['images'], function ($img) {
                 return $img !== null;
             }));
 
@@ -243,9 +207,9 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
             $ids = Tag::createOrIgnore(TypeTag::ChallengeTag, $payload['tags']);
             $challenge->tags()->sync($ids);
 
-            \DB::commit();
+            DB::commit();
         } catch (\Throwable $th) {
-            \DB::rollback();
+            DB::rollback();
             throw $th;
         }
     }
