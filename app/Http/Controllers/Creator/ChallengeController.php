@@ -9,13 +9,19 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ConfirmNewChallengeRequest;
 use App\Http\Requests\Creator\ConfirmNewChallengeMemberRequest;
 use App\Http\Requests\Creator\StoreChallengeRequest;
+use App\Http\Requests\ReplyFeedbackRequest;
 use App\Http\Requests\UpdateChallengeInformationRequest;
+use App\Http\Requests\UpdateChallengeInvitationRequest;
+use App\Http\Resources\ChallengeInvitationResource;
+use App\Http\Resources\ChallengeMemberResource;
 use App\Http\Resources\ChallengePhaseResource;
 use App\Http\Resources\ChallengeResource;
+use App\Http\Resources\MessageResource;
 use App\Http\Resources\TagResource;
 use App\Models\Challenge;
 use App\Models\ChallengeInvitation;
 use App\Models\ChallengePhase;
+use App\Models\Message;
 use App\Notifications\ApproveChallenge;
 use App\Notifications\InviteJoinChallenge;
 use App\Notifications\NewChallengeNotification;
@@ -23,6 +29,7 @@ use App\Services\Interfaces\ChallengeInvitationServiceInterface;
 use App\Services\Interfaces\ChallengeServiceInterface;
 use App\Services\Interfaces\MediaServiceInterface;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Request;
@@ -124,7 +131,15 @@ class ChallengeController extends Controller
         if (!$challenge) abort(404, 'not founded this challenge');
 
         $template = $this->challengeService->getChallengeTemplateById($id);
-        $response = ['information' => (new ChallengeResource($challenge)), 'template' => ChallengePhaseResource::collection($template)];
+        $invitations = $this->challengeInvitationService->getInvitationByChallengeId($id);
+        // $feedbacks = $this->challengeService->getFeedbacksByChallengeId($id);
+        $response = [
+            'information' => (new ChallengeResource($challenge)),
+            'template' => ChallengePhaseResource::collection($template),
+            'invitation' => ChallengeInvitationResource::collection($invitations),
+            'members' => ChallengeMemberResource::collection($challenge->members),
+            // 'feedbacks' => MessageResource::collection($feedbacks),
+        ];
         return $this->responseOk($response, 'get challenge is success');
     }
 
@@ -147,6 +162,54 @@ class ChallengeController extends Controller
         }
     }
 
+    public function updateInvitation($id, UpdateChallengeInvitationRequest $request)
+    {
+        try {
+            $payload = $request->validated();
+            $mappedPayload = \Arr::map($payload['invitations'], function ($item) {
+                return [
+                    'user_id' => $item['id'],
+                    'role' => $item['role'],
+                ];
+            });
+
+            $challenge = Challenge::find($id);
+
+            $this->challengeInvitationService->createInvitation($challenge, $mappedPayload);
+
+            return $this->responseNoContent('your challenge update invitation');
+        } catch (\Throwable $th) {
+            abort(500, $th->getMessage());
+        }
+    }
+
+    public function getFeedbacks($id)
+    {
+        $feedbacks = $this->challengeService->getFeedbacksByChallengeId($id);
+        return $this->responseOk(MessageResource::collection($feedbacks), 'success');
+    }
+
+    public function replyFeedback($challengeId, $feedbackId, ReplyFeedbackRequest $request)
+    {
+        $payload = $request->validated();
+
+        Message::create([
+            'messageable_type' => Challenge::class,
+            'messageable_id' => $challengeId,
+            'sender_id' => Auth::user()->id,
+            'receiver_id' => $payload['receiver_id'],
+            'reply_id' => $feedbackId,
+            'content' => $payload['content'],
+        ]);
+
+        return $this->responseNoContent('reply success');
+    }
+    
+    public function getComments($challengeId)
+    {
+        $comments =  Message::where('messageable_type', Challenge::class)->where('messageable_id', $challengeId)->orderBy('created_at', 'desc')->get();
+        return $this->responseOk(MessageResource::collection($comments), 'get commments ok');
+    }
     /**
      * Remove the specified resource from storage.
      */

@@ -7,8 +7,10 @@ use App\Enums\StatusChallenge;
 use App\Enums\TypeTag;
 use App\Models\Challenge;
 use App\Models\ChallengePhase;
+use App\Models\Message;
 use App\Models\Plan;
 use App\Models\SessionExercise;
+use App\Models\SessionResult;
 use App\Models\Tag;
 use App\Services\Interfaces\ChallengeServiceInterface;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -21,7 +23,7 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
     public function getChallenges()
     {
         $user = Auth::user();
-        $challenge = Challenge::with(['mainImage', 'createdBy', 'tags'])
+        $challenge = Challenge::with(['mainImage', 'createdBy', 'tags', 'images', 'comments'])->withCount('members')
             ->withCount(['phases'])
             ->withSum('phases as total_sessions', 'total_days');
         if ($user->hasAdminPermissions) {
@@ -30,7 +32,7 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
             return $challenge->where("created_by", $user->id)->get();
         } else {
             $userChallenges = Plan::where("user_id", $user->id)->pluck("challenge_id");
-            $result = $challenge->whereNotIn('id', $userChallenges)->where('status', StatusChallenge::running)->get();
+            $result = $challenge->whereNotIn('id', $userChallenges)->where('status', StatusChallenge::active)->where('public', true)->get();
             return $result;
         }
     }
@@ -80,11 +82,10 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
                 $query->update(['approved_at' => now(), 'status' => StatusChallenge::waiting]);
                 $query->where('start_at', '<', now())
                     ->where('finish_at', '>', now())
-                    ->update(['status', StatusChallenge::running]);
+                    ->update(['status', StatusChallenge::active]);
             }, function (QueryBuilder $query) {
                 $query->update(['status' => StatusChallenge::cancel]);
             });
-
     }
 
     public function approveChallenge($id)
@@ -92,9 +93,9 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
         $now = \Carbon\Carbon::now();
         DB::beginTransaction();
         try {
-            Challenge::whereId($id)->where('status', StatusChallenge::init)->update(['approved_at' => $now, 'status' => StatusChallenge::running]);
+            Challenge::whereId($id)->where('status', StatusChallenge::init)->update(['approved_at' => $now, 'status' => StatusChallenge::active]);
             // $query->whereDate('start_at', '>', $now)->update(['approved_at' => $now, 'status' => StatusChallenge::waiting]);
-            // $query->whereDate('start_at', '<', $now)->whereDate('finish_at', '>', $now)->update(['approved_at' => $now, 'status' => StatusChallenge::running]);
+            // $query->whereDate('start_at', '<', $now)->whereDate('finish_at', '>', $now)->update(['approved_at' => $now, 'status' => StatusChallenge::active]);
             DB::commit();
             return Challenge::find($id);
         } catch (\Throwable $th) {
@@ -114,7 +115,7 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
 
             $challenge = new Challenge(Arr::only($payload, [
                 'name', 'description', 'sort_desc', 'max_members',
-                'sort_desc', 'accept_all', 'public','for_gender',
+                'sort_desc', 'accept_all', 'public', 'for_gender',
                 'created_by', 'start_at', 'finish_at', 'youtube_url'
             ]));
 
@@ -149,7 +150,7 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
             $newPhase = new ChallengePhase(Arr::only($data, [
                 'name', 'total_days', 'note',
             ]));
-            $newPhase->order = $index;
+            $newPhase->order = $index + 1;
             $challenge->phases()->save($newPhase);
 
             // calculate level
@@ -193,7 +194,7 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
             $challenge = Challenge::find($id);
             $challenge->fill(Arr::only($payload, [
                 'name', 'description', 'sort_desc', 'max_members',
-                'sort_desc', 'accept_all', 'public','for_gender',
+                'sort_desc', 'accept_all', 'public', 'for_gender',
                 'start_at', 'finish_at', 'youtube_url'
             ]));
             $challenge->save();
@@ -218,5 +219,24 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
     {
         $result = Challenge::where('id', $id)->delete();
         if (!$result) throw new \Exception("delete is error");
+    }
+
+    public function getFeedbacksByChallengeId($challengeId)
+    {
+        $sessionResults = SessionResult::whereRelation('plan', 'challenge_id', $challengeId)->pluck('id');
+        $feedbacks = Message::with(['sender', 'receiver', 'replies'])->where(function ($query) use ($sessionResults) {
+            $query->where('messageable_type', SessionResult::class)->whereIn('messageable_id', $sessionResults->toArray());
+        })->orWhere(function ($query) use ($challengeId) {
+            $query->where('messageable_type', Challenge::class)->where('messageable_id', $challengeId);
+        })->whereGroup(false)->whereNull('reply_id')->get();
+        return $feedbacks;
+    }
+
+    public function getCommentsByChallengeId($challengeId)
+    {
+        $comments = Message::with(['sender', 'receiver'])->where('group', 1)->whereNull('reply_id')->Where(function ($query) use ($challengeId) {
+            $query->where('messageable_type', Challenge::class)->where('messageable_id', $challengeId);
+        })->get();
+        return $comments;
     }
 }

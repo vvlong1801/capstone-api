@@ -35,7 +35,7 @@ class WorkoutController extends Controller
         try {
             $resultWorkout = $this->workoutService->saveResultWorkoutSession($payload);
             if ($payload['feedback'] != null) {
-                Notification::send($resultWorkout['feedback']->toUser, new FeedbackWorkout($resultWorkout['feedback']));
+                Notification::send($resultWorkout['feedback']->receiver, new FeedbackWorkout($resultWorkout['feedback']));
             }
             return $this->responseNoContent("save result done");
         } catch (\Throwable $th) {

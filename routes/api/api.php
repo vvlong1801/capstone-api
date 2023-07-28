@@ -35,12 +35,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=============== Challenge ===============
     Route::post('/challenges/rate', [ChallengeController::class, 'rate']);
+    Route::get('/challenges/{id}/comments', [ChallengeController::class, 'getComments']);
     Route::get('/challenges/invitations', [ChallengeController::class, 'getChallengeInvitations']);
     Route::get('/challenges/invitations/accept/{id}', [ChallengeController::class, 'acceptInvitation']);
     Route::get('/challenges/join/{id}', [ChallengeController::class, 'join']);
+    Route::put('/challenges/{id}/comment', [ChallengeController::class, 'comment']);
     Route::apiResource('/challenges', ChallengeController::class);
 
     //=============== plan ===============
+    Route::get('/plans/{id}/feedback', [PlanController::class, 'getFeedbacks']);
     Route::get('/plans/{id}/schedule', [PlanController::class, 'getSchedule']);
     Route::apiResource('/plans', PlanController::class);
 

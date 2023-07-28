@@ -10,7 +10,7 @@ enum StatusChallenge: int
 
     case init = 0;
     case waiting = 1;
-    case running = 2;
+    case active = 2;
     case finished = 3;
     case paused = 4;
     case cancel = 5;

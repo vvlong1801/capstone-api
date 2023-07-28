@@ -28,6 +28,7 @@ class ChallengeResource extends JsonResource
             'sort_desc' => $this->sort_desc,
             'created_by' => $this->whenLoaded('createdBy', $this->createdBy->name),
             'max_members' => $this->whenHas('max_members'),
+            'count_members' => $this->count_members,
             'status' => $this->status->name,
             // 'level' => $this->whenNotNull($this->level),
             'level' => $this->level->name,

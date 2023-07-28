@@ -43,8 +43,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=============== Challenge ===============
     Route::get('/challenges/tags', [ChallengeController::class, 'getChallengeTags']);
+    Route::get('/challenges/{id}/feedback', [ChallengeController::class, 'getFeedbacks']);
+    Route::get('/challenges/{id}/comment', [ChallengeController::class, 'getComments']);
+    Route::put('/challenges/{challengeId}/feedback/{feedbackId}/reply', [ChallengeController::class, 'replyFeedback']);
     Route::post('/challenges/request-join/confirm', [ChallengeController::class, 'confirmNewChallengeMember']);
     Route::put('/challenges/{id}/information', [ChallengeController::class, 'updateBasicInformation']);
+    Route::put('/challenges/{id}/invitation', [ChallengeController::class, 'updateInvitation']);
     Route::apiResource('/challenges', ChallengeController::class);
 
     //=============== Users ===============

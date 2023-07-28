@@ -20,13 +20,18 @@ class Message extends Model
         return $this->morphTo();
     }
 
-    public function fromUser()
+    public function sender()
     {
-        return $this->belongsTo(User::class, 'from');
+        return $this->belongsTo(User::class, 'sender_id');
     }
 
-    public function toUser()
+    public function receiver()
     {
-        return $this->belongsTo(User::class, 'to');
+        return $this->belongsTo(User::class, 'receiver_id');
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(Message::class, 'reply_id');
     }
 }

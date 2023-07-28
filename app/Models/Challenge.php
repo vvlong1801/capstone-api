@@ -66,22 +66,6 @@ class Challenge extends Model
         );
     }
 
-    // protected function memberCensorship(): Attribute
-    // {
-    //     return Attribute::make(
-    //         set: fn ($name) => RoleMemberChallenge::fromName(ucfirst($name)),
-    //         get: fn ($value) => RoleMemberChallenge::fromValue($value),
-    //     );
-    // }
-
-    // protected function resultCensorship(): Attribute
-    // {
-    //     return Attribute::make(
-    //         set: fn ($name) => RoleMemberChallenge::fromName(ucfirst($name)),
-    //         get: fn ($value) => RoleMemberChallenge::fromValue(ucfirst($value)),
-    //     );
-    // }
-
     // =============== relationship =================
     // ==============================================
     public function phases()
@@ -101,7 +85,12 @@ class Challenge extends Model
 
     public function feedbacks(): MorphMany
     {
-        return $this->morphMany(Media::class, 'messageable');
+        return $this->morphMany(Message::class, 'messageable')->where('group', 0);
+    }
+
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Message::class, 'messageable')->where('group', 1);
     }
 
     public function ratings(): MorphMany
@@ -126,7 +115,7 @@ class Challenge extends Model
 
     public function members()
     {
-        return $this->belongsToMany(User::class, 'challenge_members')
+        return $this->belongsToMany(User::class, 'challenge_members')->with('workoutUser')
             ->withPivot(['role', 'status'])
             ->withPivotValue('role', RoleChallenge::member->value)
             ->withTimestamps();

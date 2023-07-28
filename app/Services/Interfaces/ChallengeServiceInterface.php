@@ -10,6 +10,8 @@ interface ChallengeServiceInterface
     public function getChallengeTags();
     public function getChallengeById($id);
     public function getChallengeTemplateById($id);
+    public function getFeedbacksByChallengeId($challengeId);
+    public function getCommentsByChallengeId($challengeId);
     // public function getChallengeStatistics($id);
     // public function getChallengeFeedbacks($id);
     public function createChallengeMember($id);

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-
+use App\Models\Message;
 use App\Models\Plan;
 use App\Models\SessionResult;
 use App\Services\Interfaces\PlanServiceInterface;
@@ -60,5 +60,14 @@ class PlanService extends BaseService implements PlanServiceInterface
             DB::rollback();
             throw $th;
         }
+    }
+
+    public function getFeedbacksByPlanId($planId)
+    {
+        $sessionResults = SessionResult::where('plan_id', $planId)->pluck('id');
+        $feedbacks = Message::with(['sender', 'receiver', 'replies'])->where(function ($query) use ($sessionResults) {
+            $query->where('messageable_type', SessionResult::class)->whereIn('messageable_id', $sessionResults->toArray());
+        })->whereGroup(false)->whereNull('reply_id')->get();
+        return $feedbacks;
     }
 }
