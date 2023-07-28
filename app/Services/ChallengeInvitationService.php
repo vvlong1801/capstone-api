@@ -14,7 +14,7 @@ class ChallengeInvitationService extends BaseService implements ChallengeInvitat
 {
     public function getInvitationByChallengeId($id)
     {
-        return ChallengeInvitation::where('challenge_id', $id)->get();
+        return ChallengeInvitation::with('user')->where('challenge_id', $id)->get();
     }
 
     public function getInvitationByUserId($userId)

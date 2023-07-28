@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\WorkoutUser;
 
-use App\Enums\MediaCollection;
+
 use App\Http\Controllers\Controller;
-use App\Http\Requests\WorkoutUser\StorePlanSessionRequest;
 use App\Http\Resources\ChallengePhaseResource;
-use App\Http\Resources\ChallengeResource;
+
+use App\Http\Resources\MessageResource;
 use App\Http\Resources\WorkoutUser\PlanResource;
-use App\Notifications\NotifyMemberCompletedSession;
+
 use App\Services\Interfaces\ChallengeServiceInterface;
-use App\Services\Interfaces\MediaServiceInterface;
+
 use App\Services\Interfaces\PlanServiceInterface;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Notification;
+
 
 class PlanController extends Controller
 {
@@ -34,14 +34,6 @@ class PlanController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(string $id, ChallengeServiceInterface $challengeService)
@@ -51,9 +43,15 @@ class PlanController extends Controller
         return $this->responseOk(['plan' => new PlanResource($plan), 'schedule' => ChallengePhaseResource::collection($template)], 'get plan success');
     }
 
+    public function getFeedbacks($id)
+    {
+        $feedbacks = $this->planService->getFeedbacksByPlanId($id);
+        return $this->responseOk(MessageResource::collection($feedbacks), 'success');
+    }
+
     /**
      * Display the specified resource.
-    */
+     */
     public function getSchedule(string $id, ChallengeServiceInterface $challengeService)
     {
         $plan = $this->planService->getPlanById($id);
@@ -68,14 +66,6 @@ class PlanController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
     {
         //
     }

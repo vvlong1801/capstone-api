@@ -43,7 +43,7 @@ class FeedbackWorkout extends Notification
         return [
             'severity' => 'info',
             'summary' => 'Feedback Workout',
-            'detail' => $this->message->fromUser->name . 'sended a feedback to you',
+            'detail' => $this->message->sender->name . 'sended a feedback to you',
             'data' => $this->message
         ];
     }
@@ -56,7 +56,7 @@ class FeedbackWorkout extends Notification
         return new BroadcastMessage([
             'severity' => 'info',
             'summary' => 'Feedback Workout',
-            'detail' => $this->message->fromUser->name . ' sended a feedback to you',
+            'detail' => $this->message->sender->name . ' sended a feedback to you',
         ]);
     }
 }

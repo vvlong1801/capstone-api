@@ -33,6 +33,7 @@ class UpdateChallengeInformationRequest extends FormRequest
             'max_members' => 'numeric',
             'invitation' => 'array',
             'public' => 'boolean',
+            'for_gender' => '',
             'accept_all' => 'boolean',
             'start_at' => 'required',
             'tags' => 'array',

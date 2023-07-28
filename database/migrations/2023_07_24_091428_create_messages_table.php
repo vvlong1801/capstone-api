@@ -15,10 +15,13 @@ return new class extends Migration
             $table->id();
             $table->morphs('messageable');
             $table->text('content');
-            $table->unsignedBigInteger('from');
-            $table->unsignedBigInteger('to');
-            $table->foreign('from')->references('id')->on('users')->cascadeOnDelete();
-            $table->foreign('to')->references('id')->on('users')->cascadeOnDelete();
+            $table->unsignedBigInteger('sender_id')->nullable();
+            $table->unsignedBigInteger('receiver_id')->nullable();
+            $table->foreign('sender_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('receiver_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->unsignedBigInteger('reply_id')->nullable();
+            $table->foreign('reply_id')->references('id')->on('messages')->cascadeOnDelete();
+            $table->boolean('group')->default(false);
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\WorkoutUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\WorkoutUser\RateChallengeRequest;
 use App\Http\Resources\ChallengeResource;
+use App\Http\Resources\MessageResource;
 use App\Models\Challenge;
 use App\Models\Message;
 use App\Models\Plan;
@@ -16,6 +17,7 @@ use App\Services\Interfaces\ChallengeInvitationServiceInterface;
 use App\Services\Interfaces\ChallengeMemberServiceInterface;
 use App\Services\Interfaces\ChallengeServiceInterface;
 use App\Services\Interfaces\PlanServiceInterface;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 
@@ -109,17 +111,30 @@ class ChallengeController extends Controller
             'user_id' => Auth::user()->id,
         ]);
 
-        $message = Message::create([
-            'messageable_type' => Challenge::class,
-            'messageable_id' => $challenge->id,
-            'content' => $payload['feedback'],
-            'from' => Auth::user()->id,
-            'to' => $challenge->created_by,
-        ]);
-
         Notification::send($challenge->createdBy, new NewChallengeRating($challenge, $rate));
-        Notification::send($challenge->createdBy, new FeedbackWorkout($message));
 
         return $this->responseNoContent('success');
+    }
+
+    public function comment($challengeId, Request $request)
+    {
+
+        Challenge::where('id', $challengeId)->whereExists(function ($query) use ($request, $challengeId) {
+            if ($request['content']) {
+                Message::create([
+                    'messageable_type' => Challenge::class,
+                    'messageable_id' => $challengeId,
+                    'content' => $request['content'],
+                    'group' => true,
+                    'sender_id' => Auth::user()->id,
+                ]);
+            }
+        });
+    }
+
+    public function getComments($challengeId)
+    {
+        $comments =  Message::where('messageable_type', Challenge::class)->where('messageable_id', $challengeId)->orderBy('created_at', 'desc')->get();
+        return $this->responseOk(MessageResource::collection($comments), 'get commments ok');
     }
 }

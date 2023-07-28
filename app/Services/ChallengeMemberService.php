@@ -18,7 +18,13 @@ class ChallengeMemberService extends BaseService implements ChallengeMemberServi
             $challenge = Challenge::find($challengeId);
             $existedInvitation = ChallengeInvitation::where('challenge_id', $challengeId)->where('user_id', $userId)->count();
             $status = $existedInvitation || $challenge->accept_all;
-            DB::table('challenge_members')->insert(['challenge_id' => $challengeId, 'user_id' => $userId, 'status' => $status, 'role' => RoleChallenge::member]);
+            DB::table('challenge_members')->insert([
+                'challenge_id' => $challengeId,
+                'user_id' => $userId,
+                'status' => $status,
+                'role' => RoleChallenge::member,
+                'created_at' => \Carbon\Carbon::now()
+            ]);
             DB::commit();
             return $challenge;
         } catch (\Throwable $th) {

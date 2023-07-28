@@ -19,7 +19,7 @@ class PlanResource extends JsonResource
             'id' => $this->id,
             'challenge' => new ChallengeResource($this->challenge),
             'current_session' => $this->current_session,
-            'current_phase' => $this->current_session,
+            'current_phase' => $this->current_phase,
             'completed' => ($this->completed_at !== null),
         ];
     }

@@ -16,6 +16,7 @@ class SessionExerciseResource extends JsonResource
     {
         return [
             'name' => $this->exercise->name,
+            'level' => $this->exercise->level,
             'image' => new MediaResource($this->exercise->image),
             'data' => $this->whenLoaded('exercise', new ExerciseResource($this->exercise)),
             'exercise_id' => $this->exercise_id,

@@ -27,17 +27,20 @@ class ChallengeResource extends JsonResource
             'created_by' => $this->whenLoaded('createdBy', $this->createdBy->name),
             'max_members' => $this->whenHas('max_members'),
             'status' => $this->status->name,
+            'public' => $this->public ? true : false,
             // 'level' => $this->whenNotNull($this->level),
             'level' => $this->level?->name,
             'for_gender' => $this->for_gender?->name,
             'start_at' => $this->whenNotNull($this->start_at),
             'finish_at' => $this->whenNotNull($this->finish_at),
             'youtube_url' => $this->whenNotNull($this->youtube_url),
+            'accept_all' => $this->accept_all ? true : false,
             // 'phases' => ChallengePhaseResource::collection($this->whenLoaded('phases')),
             'images' => MediaResource::collection($this->whenLoaded('images')),
             'members_count' => $this->whenNotNull($this->members_count),
             'rate' => $this->rateValue,
             'num_rate' => $this->numRate,
+            'comments' => MessageResource::collection($this->comments),
         ];
     }
 }
