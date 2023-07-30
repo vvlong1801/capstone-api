@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\WorkoutUser\AuthController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\WorkoutUser\AnalysisController;
 use App\Http\Controllers\WorkoutUser\ChallengeController;
 use App\Http\Controllers\WorkoutUser\PlanController;
 use App\Http\Controllers\WorkoutUser\ProfileController;
@@ -52,5 +53,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=============== profile ===============
     Route::get('/goals', [ProfileController::class, 'getGoals']);
+    Route::get('/analysis', [AnalysisController::class, 'index']);
     Route::put('/profile/{id}', [ProfileController::class, 'update']);
 });

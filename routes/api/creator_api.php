@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\EquipmentController;
 use App\Http\Controllers\Admin\ExerciseController;
 use App\Http\Controllers\Admin\MuscleController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Creator\AnalysisController;
 use App\Http\Controllers\Creator\AuthController;
 use App\Http\Controllers\Creator\ChallengeController;
 use App\Http\Controllers\Creator\ProfileController;
@@ -62,4 +63,5 @@ Route::middleware('auth:sanctum')->group(function () {
     //=============== Others ===============
     Route::get('/certificate-issuers', [ProfileController::class, 'getCertificateIssuers']);
     Route::get('/techniques', [ProfileController::class, 'getTechniques']);
+    Route::get('/analysis', [AnalysisController::class, 'index']);
 });
