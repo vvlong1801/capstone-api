@@ -1,13 +1,9 @@
 <?php
 
-namespace App\Services\Interfaces;
+namespace App\Services\Interfaces\Analysis;
 
-interface DashboardServiceInterface
+interface AdminAnalysisServiceInterface
 {
-    // public function getNewMembersOfMonth();
-    // public function getChallengesOfLastSomeDay(int $count);
-    // public function getAllCurrentMembers($role = null);
-    // public function getChallengeMembers(int $id);
     public function getTopChallenges(int $k, $sort);
     public function getTopCreators(int $k);
     public function countWorkoutUsers();
