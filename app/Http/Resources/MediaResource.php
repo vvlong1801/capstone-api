@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use App\Services\Interfaces\MediaServiceInterface;
+use App\Services\MediaServices\LocalService;
+use App\Services\MediaServices\S3Service;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
