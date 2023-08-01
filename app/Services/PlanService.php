@@ -23,13 +23,13 @@ class PlanService extends BaseService implements PlanServiceInterface
         return $plan;
     }
 
-    public function createPlan($challengeId)
+    public function createPlan($userId, $challengeId)
     {
         DB::beginTransaction();
         try {
             $plan = DB::table('plans')->insertOrIgnore([
                 'challenge_id' => $challengeId,
-                'user_id' => Auth::user()->id,
+                'user_id' => $userId,
                 'current_session' => 1
             ]);
             DB::commit();
