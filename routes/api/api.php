@@ -4,6 +4,7 @@ use App\Http\Controllers\WorkoutUser\AuthController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\WorkoutUser\AnalysisController;
 use App\Http\Controllers\WorkoutUser\ChallengeController;
+use App\Http\Controllers\WorkoutUser\PersonalTrainerController;
 use App\Http\Controllers\WorkoutUser\PlanController;
 use App\Http\Controllers\WorkoutUser\ProfileController;
 use App\Http\Controllers\WorkoutUser\WorkoutController;
@@ -33,6 +34,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=============== Upload file ===============
     Route::post('/upload', [MediaController::class, 'upload']);
+
+    //=============== Personal trainer ===============
+    Route::apiResource('/personal-trainers', PersonalTrainerController::class);
 
     //=============== Challenge ===============
     Route::post('/challenges/rate', [ChallengeController::class, 'rate']);
