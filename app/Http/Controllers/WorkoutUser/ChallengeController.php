@@ -57,7 +57,7 @@ class ChallengeController extends Controller
         try {
             $challenge = $this->challengeMemberService->createChallengeMember(Auth::user()->id, $id);
             if ($challenge->accept_all) {
-                $planService->createPlan($id);
+                $planService->createPlan(Auth::user()->id, $id);
                 // notify to creator of the challenge
                 $response = ['approved' => true];
             } else {
@@ -78,7 +78,7 @@ class ChallengeController extends Controller
         try {
             $userId = Auth::user()->id;
             $this->challengeMemberService->createChallengeMember($userId, $id);
-            $planService->createPlan($id);
+            $planService->createPlan($userId, $id);
             $challengeInvitationService->deleteInvitation($userId, $id);
             // response to user
             return $this->responseNoContent('accept challenge success');

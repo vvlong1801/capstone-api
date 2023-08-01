@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Creator\AnalysisController;
 use App\Http\Controllers\Creator\AuthController;
 use App\Http\Controllers\Creator\ChallengeController;
+use App\Http\Controllers\Creator\ChallengeMemberController;
 use App\Http\Controllers\Creator\ProfileController;
 use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=============== Equipments ===============
     Route::apiResource('/equipments', EquipmentController::class)->only('index');
+
+    //=============== Challenge Member ===============
+    Route::get('/challenge-members/{memberId}/approve', [ChallengeMemberController::class, 'approve']);
+    Route::apiResource('/challenge-members', ChallengeMemberController::class)->only(['index', 'show']);
 
     //=============== Exercise ===============
     Route::get('/exercises/group_tags', [ExerciseController::class, 'getGroupTags']);
