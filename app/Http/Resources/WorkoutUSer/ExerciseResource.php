@@ -1,7 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\WorkoutUser;
 
+use App\Http\Resources\EquipmentResource;
+use App\Http\Resources\MediaResource;
+use App\Http\Resources\MuscleResource;
+use App\Http\Resources\TagResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,7 +24,7 @@ class ExerciseResource extends JsonResource
             "level" => $this->level,
             "type" => $this->type,
             "for_gender" => $this->for_gender->name,
-            'created_by' => $this->whenLoaded('createdBy', ['id' => $this->created_by, 'name' => $this->createdBy->name]),
+            'created_by' => $this->whenLoaded('createdBy', $this->createdBy->name),
             "group_tags" => TagResource::collection($this->groupTags),
 
             "requirement_unit" => $this->requirement_unit,

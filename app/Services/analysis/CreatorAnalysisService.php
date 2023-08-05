@@ -50,22 +50,22 @@ class CreatorAnalysisService extends BaseService implements CreatorAnalysisServi
         $challengeIds = Challenge::where('created_by', $creator->id)->pluck('id');
         $planIds = Plan::whereIn('challenge_id', $challengeIds)->pluck('id');
         return DB::table('session_results')->selectRaw('DATE_FORMAT(created_at, "%m-%Y") AS month, COUNT(*) AS count')
-        ->whereIn('plan_id', $planIds)
-        ->groupBy('month')
-        ->orderBy('month')
-        ->get();
-
+            ->whereIn('plan_id', $planIds)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
     }
 
     public function countMemberGroupByChallenge($creator)
     {
         $challengeIds = Challenge::where('created_by', $creator->id)->pluck('id');
-        return DB::table('challenge_members')->selectRaw('challenges.name,COUNT(*) AS count')
-        ->join('challenges', 'challenge_id', '=', 'challenges.id')
-        ->whereIn('challenge_id', $challengeIds)->where('challenge_members.status', StatusChallengeMember::approved)
-        ->groupBy('challenge_id')
-        ->orderBy('count')
-        ->get();
+        // dd($challengeIds);
+        return DB::table('challenge_members')->selectRaw('challenges.name, challenge_id, COUNT(*) AS count')
+            ->join('challenges', 'challenge_id', '=', 'challenges.id')
+            ->whereIn('challenge_id', $challengeIds)->where('challenge_members.status', StatusChallengeMember::approved)
+            ->groupBy('challenge_id')
+            ->orderBy('count')
+            ->get();
     }
 
     public function countSessionResultGroupByChallenge($creator)
@@ -73,11 +73,11 @@ class CreatorAnalysisService extends BaseService implements CreatorAnalysisServi
         $challengeIds = Challenge::where('created_by', $creator->id)->pluck('id');
         $planIds = Plan::whereIn('challenge_id', $challengeIds)->pluck('id');
         return DB::table('session_results')->selectRaw('challenges.name, COUNT(*) AS count')
-        ->join('plans', 'plan_id', '=', 'plans.id')
-        ->join('challenges', 'plans.challenge_id', '=', 'challenges.id')
-        ->whereIn('plan_id', $planIds)
-        ->groupBy('plans.challenge_id')
-        ->orderBy('count')
-        ->get();
+            ->join('plans', 'session_results.plan_id', '=', 'plans.id')
+            ->join('challenges', 'plans.challenge_id', '=', 'challenges.id')
+            ->whereIn('session_results.plan_id', $planIds)
+            ->groupBy('challenges.name')
+            ->orderBy('count')
+            ->get();
     }
 }

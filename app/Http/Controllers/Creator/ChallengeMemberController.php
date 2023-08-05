@@ -53,7 +53,7 @@ class ChallengeMemberController extends Controller
     public function show(string $id)
     {
         $result = DB::table('challenge_members')->select('challenge_id', 'user_id')->whereId($id)->first();
-        $workoutUser = WorkoutUser::with(['user', 'user.avatar'])->find($result->user_id);
+        $workoutUser = WorkoutUser::with(['user', 'user.avatar'])->where('user_id', $result->user_id)->first();
         $plan = Plan::where('user_id', $result->user_id)->where('challenge_id', $result->challenge_id)->first();
         $sessions = SessionResult::with(['phaseSession', 'feedbacks'])->where('plan_id', $plan->id)->get();
         $calInDay = $this->challengeMemberService->sumCalInDay($plan->id);

@@ -2,11 +2,10 @@
 
 namespace App\Http\Resources\WorkoutUser;
 
-use App\Http\Resources\WorkoutUSer\ChallengeResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PlanResource extends JsonResource
+class ChallengePhaseResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,10 +16,11 @@ class PlanResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'challenge' => new ChallengeResource($this->challenge),
-            'current_session' => $this->current_session,
-            'current_phase' => $this->current_phase,
-            'completed' => ($this->completed_at !== null),
+            'name' => $this->name,
+            'order' => $this->order,
+            'level' => $this->whenNotNull($this->level),
+            'total_days' => $this->total_days,
+            'sessions' => PhaseSessionResource::collection($this->whenLoaded('sessions')),
         ];
     }
 }

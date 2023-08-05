@@ -1,14 +1,17 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\ChallengeController;
 use App\Http\Controllers\Admin\CreatorController;
 use App\Http\Controllers\Admin\EquipmentController;
 use App\Http\Controllers\Admin\ExerciseController;
 use App\Http\Controllers\Admin\MuscleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\TagController;
-use App\Http\Controllers\Creator\ChallengeController;
+use App\Http\Controllers\Admin\sources\CertificateIssuerController;
+use App\Http\Controllers\Admin\sources\GoalController;
+use App\Http\Controllers\Admin\sources\TagController;
+// use App\Http\Controllers\Creator\ChallengeController;
 use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;
 /*
@@ -48,10 +51,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/challenges/request-join/confirm', [ChallengeController::class, 'confirmNewChallengeMember']);
     Route::put('/challenges/{id}/information', [ChallengeController::class, 'updateBasicInformation']);
     Route::put('/challenges/{id}/confirm', [ChallengeController::class, 'confirmNewChallenge']);
+    Route::put('/challenges/{id}/invitation', [ChallengeController::class, 'updateInvitation']);
     Route::apiResource('/challenges', ChallengeController::class);
 
     //=============== Tags ===============
+    Route::get('/tags/exercises', [TagController::class, 'getExerciseTags']);
+    Route::get('/tags/challenges', [TagController::class, 'getChallengeTags']);
     Route::apiResource('/tags', TagController::class);
+
+    //=============== Tags ===============
+    Route::apiResource('/goals', GoalController::class);
+
+    //=============== Certificates ===============
+    Route::put('/certificates/{id}/lock', [CertificateIssuerController::class, 'lock']);
+    Route::put('/certificates/{id}/unlock', [CertificateIssuerController::class, 'unlock']);
+    Route::apiResource('/certificates', CertificateIssuerController::class);
 
     //=============== Users ===============
     Route::get('/users/search/{keyword}', [UserController::class, 'search']);

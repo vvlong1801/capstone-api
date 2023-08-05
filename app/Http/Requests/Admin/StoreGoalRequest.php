@@ -3,15 +3,16 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
-class ConfirmNewChallengeRequest extends FormRequest
+class StoreGoalRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return $this->user()->isSuperAdmin;
+        return Auth::user()->hasAdminPermissions;
     }
 
     /**
@@ -22,8 +23,8 @@ class ConfirmNewChallengeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'approve' => 'required|boolean',
-            'reasons' => '',
+            'name' => 'required',
+            'tags' => 'required|array',
         ];
     }
 }

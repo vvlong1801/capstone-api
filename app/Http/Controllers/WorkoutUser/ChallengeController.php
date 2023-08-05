@@ -4,8 +4,8 @@ namespace App\Http\Controllers\WorkoutUser;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\WorkoutUser\RateChallengeRequest;
-use App\Http\Resources\ChallengeResource;
 use App\Http\Resources\MessageResource;
+use App\Http\Resources\WorkoutUSer\ChallengeResource;
 use App\Models\Challenge;
 use App\Models\Message;
 use App\Models\Plan;
@@ -15,6 +15,7 @@ use App\Notifications\NewChallengeMember;
 use App\Notifications\NewChallengeRating;
 use App\Services\Interfaces\ChallengeInvitationServiceInterface;
 use App\Services\Interfaces\ChallengeMemberServiceInterface;
+use App\Services\Interfaces\ChallengeRecommendServiceInterface;
 use App\Services\Interfaces\ChallengeServiceInterface;
 use App\Services\Interfaces\PlanServiceInterface;
 use Illuminate\Http\Request;
@@ -35,9 +36,10 @@ class ChallengeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(ChallengeRecommendServiceInterface $challengeRecommendService)
     {
         $challenges = $this->challengeService->getChallenges();
+        $challenges = $challengeRecommendService->recommend(Auth::user()->id, $challenges);
         return $this->responseOk(ChallengeResource::collection($challenges), 'get challenges is success');
     }
 
@@ -134,7 +136,7 @@ class ChallengeController extends Controller
 
     public function getComments($challengeId)
     {
-        $comments =  Message::where('messageable_type', Challenge::class)->where('messageable_id', $challengeId)->orderBy('created_at', 'desc')->get();
+        $comments =  Message::where('messageable_type', Challenge::class)->where('messageable_id', $challengeId)->whereNull('reply_id')->orderBy('created_at', 'desc')->get();
         return $this->responseOk(MessageResource::collection($comments), 'get commments ok');
     }
 }

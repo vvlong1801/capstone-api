@@ -15,6 +15,6 @@ enum MediaCollection: string
     case SessionResult = 'session_result';
     case PersonalTrainerCertificate = 'pt_certificate';
     case TrainingWorkout = 'training_workouts';
-    case IssuerExampleCertificate = 'issuer_certificate';
+    case ExampleCertificate = 'example_certificate';
     case Temporary = 'temporaries';
 }

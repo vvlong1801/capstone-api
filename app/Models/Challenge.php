@@ -116,7 +116,7 @@ class Challenge extends Model
     public function members()
     {
         return $this->belongsToMany(User::class, 'challenge_members')->with('workoutUser')
-            ->withPivot(['role', 'status'])
+            ->withPivot(['role', 'status', 'id'])
             ->withPivotValue('role', RoleChallenge::member->value)
             ->withTimestamps();
     }

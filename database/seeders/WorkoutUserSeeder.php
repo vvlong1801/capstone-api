@@ -15,7 +15,7 @@ class WorkoutUserSeeder extends Seeder
      */
     public function run(): void
     {
-        $workoutUsers = WorkoutUser::factory()->count(3)
+        $workoutUsers = WorkoutUser::factory()->count(1)
             ->for(User::factory())
             ->create();
     }

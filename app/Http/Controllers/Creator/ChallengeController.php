@@ -19,12 +19,8 @@ use App\Http\Resources\ChallengeResource;
 use App\Http\Resources\MessageResource;
 use App\Http\Resources\TagResource;
 use App\Models\Challenge;
-use App\Models\ChallengeInvitation;
-use App\Models\ChallengePhase;
 use App\Models\Message;
 use App\Notifications\ApproveChallenge;
-use App\Notifications\InviteJoinChallenge;
-use App\Notifications\NewChallengeNotification;
 use App\Services\Interfaces\ChallengeInvitationServiceInterface;
 use App\Services\Interfaces\ChallengeServiceInterface;
 use App\Services\Interfaces\MediaServiceInterface;
@@ -68,15 +64,17 @@ class ChallengeController extends Controller
     public function store(StoreChallengeRequest $request, MediaServiceInterface $mediaService)
     {
         $payload = $request->validated();
-
+        $user = Auth::user();
         try {
             $payload['images'] = Arr::map($payload['images'], function ($image) use ($mediaService) {
                 return $mediaService->createMedia($image, MediaCollection::Challenge);
             });
 
-            $payload['created_by'] = $request->user()->id;
+            $payload['created_by'] = $user->id;
             $challenge = $this->challengeService->createChallenge($payload);
-            event(new NewChallengeEvent($challenge));
+            if ($user->isCreator) {
+                event(new NewChallengeEvent($challenge));
+            }
             $this->challengeInvitationService->createInvitation($challenge, $payload['invitation']);
 
             return $this->responseNoContent('your challenge created');
@@ -85,33 +83,33 @@ class ChallengeController extends Controller
         }
     }
 
-    /**
-     * confirm a newly challenge.
-     */
-    public function confirmNewChallenge($id, ConfirmNewChallengeRequest $request)
-    {
-        $payload = $request->validated();
+    // /**
+    //  * confirm a newly challenge.
+    //  */
+    // public function confirmNewChallenge($id, ConfirmNewChallengeRequest $request)
+    // {
+    //     $payload = $request->validated();
 
-        try {
-            if ($payload['approve']) {
-                $challenge = $this->challengeService->approveChallenge($id);
-                //notify invitation
-                $invitations = $this->challengeInvitationService->getInvitationByChallengeId($id);
-                // Notification::send()
-                // foreach ($invitations as $key => $invitation) {
-                //     Notification::send($invitation->user, new InviteJoinChallenge($invitation, true));
-                // }
-                //notify creator
-                Notification::send($challenge->createdBy, new ApproveChallenge($challenge, true));
-            } else {
-                $challenge = Challenge::find($id);
-                Notification::send($challenge->createdBy, new ApproveChallenge($challenge, false));
-            }
-            return $this->responseNoContent('confirm success');
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-    }
+    //     try {
+    //         if ($payload['approve']) {
+    //             $challenge = $this->challengeService->approveChallenge($id);
+    //             //notify invitation
+    //             $invitations = $this->challengeInvitationService->getInvitationByChallengeId($id);
+    //             // Notification::send()
+    //             // foreach ($invitations as $key => $invitation) {
+    //             //     Notification::send($invitation->user, new InviteJoinChallenge($invitation, true));
+    //             // }
+    //             //notify creator
+    //             Notification::send($challenge->createdBy, new ApproveChallenge($challenge, true));
+    //         } else {
+    //             $challenge = Challenge::find($id);
+    //             Notification::send($challenge->createdBy, new ApproveChallenge($challenge, false));
+    //         }
+    //         return $this->responseNoContent('confirm success');
+    //     } catch (\Throwable $th) {
+    //         throw $th;
+    //     }
+    // }
 
 
     public function confirmNewChallengeMember(ConfirmNewChallengeMemberRequest $request)
@@ -122,6 +120,7 @@ class ChallengeController extends Controller
             ->update(['status' => $payload['accept'] ? StatusChallengeMember::approved : StatusChallengeMember::unApproved]);
         return $this->responseNoContent('accept success');
     }
+
     /**
      * Display the specified resource.
      */
@@ -204,7 +203,7 @@ class ChallengeController extends Controller
 
         return $this->responseNoContent('reply success');
     }
-    
+
     public function getComments($challengeId)
     {
         $comments =  Message::where('messageable_type', Challenge::class)->where('messageable_id', $challengeId)->orderBy('created_at', 'desc')->get();

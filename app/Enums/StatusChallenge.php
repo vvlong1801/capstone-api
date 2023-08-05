@@ -14,4 +14,5 @@ enum StatusChallenge: int
     case finished = 3;
     case paused = 4;
     case cancel = 5;
+    case disapprove = 6;
 }
