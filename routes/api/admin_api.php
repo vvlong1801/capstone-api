@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\EquipmentController;
 use App\Http\Controllers\Admin\ExerciseController;
 use App\Http\Controllers\Admin\MuscleController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ChallengeMemberController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\sources\CertificateIssuerController;
 use App\Http\Controllers\Admin\sources\GoalController;
@@ -81,4 +82,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=============== Dashboard ===============
     Route::get('/analysis', [DashboardController::class, 'analysis']);
+
+    //=============== Challenge Member ===============
+    Route::get('/challenge-members/{memberId}/approve', [ChallengeMemberController::class, 'approve']);
+    Route::apiResource('/challenge-members', ChallengeMemberController::class)->only(['index', 'show']);
 });
