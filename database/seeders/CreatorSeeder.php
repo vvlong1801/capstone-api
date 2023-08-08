@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\Role;
+use App\Enums\StatusAccount;
 use App\Models\Account;
 use App\Models\Creator;
 use App\Models\User;
@@ -18,7 +19,7 @@ class CreatorSeeder extends Seeder
         $creator = Creator::factory()->for(
             User::factory()->state([
                 'name' => 'creator',
-                'email' => 'creator1@creator.com',
+                'email' => 'creator@creator.com',
             ])->for(
                 Account::factory()->state(['role' => Role::creator])
             )

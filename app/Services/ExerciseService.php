@@ -14,9 +14,9 @@ class ExerciseService extends BaseService implements ExerciseServiceInterface
 {
     public function getExercises()
     {
-        return Exercise::with(['groupTags', 'createdBy', 'image'])->when(Auth::user()->isCreator, function ($query) {
+        return Exercise::with(['groupTags', 'createdBy', 'image', 'muscles', 'equipment'])->when(Auth::user()->isCreator, function ($query) {
             $query->where('created_by', 1)->orWhere('created_by', Auth::user()->id);
-        })->get();  
+        })->orderByDesc('created_at')->get();
     }
 
     public function getGroupTags()

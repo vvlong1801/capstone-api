@@ -24,7 +24,7 @@ class ChallengeResource extends JsonResource
             'main_image' => new MediaResource($this->whenLoaded('mainImage')),
             'description' => $this->description,
             'sort_desc' => $this->sort_desc,
-            'created_by' => $this->whenLoaded('createdBy', $this->createdBy->name),
+            'created_by' => $this->whenLoaded('createdBy', ['id' => $this->created_by, 'name' => $this->createdBy->name]),
             'max_members' => $this->whenHas('max_members'),
             'status' => $this->status->name,
             'public' => $this->public ? true : false,

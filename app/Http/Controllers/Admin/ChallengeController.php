@@ -3,20 +3,26 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\MediaCollection;
+use App\Enums\StatusChallenge;
 use App\Events\NewChallengeEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ConfirmNewChallengeRequest;
 use App\Http\Requests\Creator\StoreChallengeRequest;
 use App\Http\Requests\UpdateChallengeInformationRequest;
+use App\Http\Requests\UpdateChallengeInvitationRequest;
+use App\Http\Resources\ChallengeInvitationResource;
+use App\Http\Resources\ChallengeMemberResource;
 use App\Http\Resources\ChallengePhaseResource;
+use App\Http\Resources\ChallengeResource;
 use App\Http\Resources\TagResource;
-use App\Http\Resources\WorkoutUSer\ChallengeResource;
 use App\Models\Challenge;
 use App\Notifications\ApproveChallenge;
+use App\Notifications\UnApproveChallenge;
 use App\Services\Interfaces\ChallengeInvitationServiceInterface;
 use App\Services\Interfaces\ChallengeServiceInterface;
 use App\Services\Interfaces\MediaServiceInterface;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 
 class ChallengeController extends Controller
@@ -53,15 +59,18 @@ class ChallengeController extends Controller
     public function store(StoreChallengeRequest $request, MediaServiceInterface $mediaService)
     {
         $payload = $request->validated();
+        $user = Auth::user();
 
         try {
             $payload['images'] = Arr::map($payload['images'], function ($image) use ($mediaService) {
                 return $mediaService->createMedia($image, MediaCollection::Challenge);
             });
 
-            $payload['created_by'] = $request->user()->id;
+            $payload['created_by'] = $user->id;
             $challenge = $this->challengeService->createChallenge($payload);
-            event(new NewChallengeEvent($challenge));
+            if ($user->isCreator) {
+                event(new NewChallengeEvent($challenge));
+            }
             $this->challengeInvitationService->createInvitation($challenge, $payload['invitation']);
 
             return $this->responseNoContent('your challenge created');
@@ -87,10 +96,11 @@ class ChallengeController extends Controller
                 //     Notification::send($invitation->user, new InviteJoinChallenge($invitation, true));
                 // }
                 //notify creator
-                Notification::send($challenge->createdBy, new ApproveChallenge($challenge, true));
+                Notification::send($challenge->createdBy, new ApproveChallenge($challenge));
             } else {
                 $challenge = Challenge::find($id);
-                Notification::send($challenge->createdBy, new ApproveChallenge($challenge, false));
+                $challenge->update(['status' => StatusChallenge::disapprove]);
+                Notification::send($challenge->createdBy, new UnApproveChallenge($challenge, $payload['reasons']));
             }
             return $this->responseNoContent('confirm success');
         } catch (\Throwable $th) {
@@ -107,7 +117,15 @@ class ChallengeController extends Controller
         if (!$challenge) abort(404, 'not founded this challenge');
 
         $template = $this->challengeService->getChallengeTemplateById($id);
-        $response = ['information' => (new ChallengeResource($challenge)), 'template' => ChallengePhaseResource::collection($template)];
+        $invitations = $this->challengeInvitationService->getInvitationByChallengeId($id);
+        // $feedbacks = $this->challengeService->getFeedbacksByChallengeId($id);
+        $response = [
+            'information' => (new ChallengeResource($challenge)),
+            'template' => ChallengePhaseResource::collection($template),
+            'invitation' => ChallengeInvitationResource::collection($invitations),
+            'members' => ChallengeMemberResource::collection($challenge->members),
+            // 'feedbacks' => MessageResource::collection($feedbacks),
+        ];
         return $this->responseOk($response, 'get challenge is success');
     }
 
@@ -127,6 +145,27 @@ class ChallengeController extends Controller
             return $this->responseNoContent('basic information of your challenge was updated');
         } catch (\Throwable $th) {
             return $this->responseFailed($th->getMessage());
+        }
+    }
+
+    public function updateInvitation($id, UpdateChallengeInvitationRequest $request)
+    {
+        try {
+            $payload = $request->validated();
+            $mappedPayload = \Arr::map($payload['invitations'], function ($item) {
+                return [
+                    'user_id' => $item['id'],
+                    'role' => $item['role'],
+                ];
+            });
+
+            $challenge = Challenge::find($id);
+
+            $this->challengeInvitationService->createInvitation($challenge, $mappedPayload);
+
+            return $this->responseNoContent('your challenge update invitation');
+        } catch (\Throwable $th) {
+            abort(500, $th->getMessage());
         }
     }
 

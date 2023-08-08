@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\Gender;
+use App\Enums\Level;
 use App\Enums\StatusChallenge;
 use App\Enums\TypeTag;
 use App\Models\Challenge;
@@ -40,7 +41,7 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
     public function getChallengeById($id)
     {
         $challenge = Challenge::with(['createdBy', 'images', 'mainImage'])
-            ->withCount(['phases'])
+            ->withCount(['phases', 'members'])
             ->withSum('phases as total_sessions', 'total_days')
             ->whereId($id)
             ->first();
@@ -112,16 +113,21 @@ class ChallengeService extends BaseService implements ChallengeServiceInterface
             $payload['start_at'] = \Carbon\Carbon::parse($payload['start_at'])->toDateTimeString();
             $payload['finish_at'] = \Carbon\Carbon::parse($payload['finish_at'])->toDateTimeString();
             $payload['for_gender'] = Gender::fromName($payload['for_gender']);
+            $payload['level'] = Level::fromName($payload['level']);
 
             $challenge = new Challenge(Arr::only($payload, [
                 'name', 'description', 'sort_desc', 'max_members',
-                'sort_desc', 'accept_all', 'public', 'for_gender',
+                'sort_desc', 'accept_all', 'public', 'for_gender', 'level',
                 'created_by', 'start_at', 'finish_at', 'youtube_url'
             ]));
 
-            $challenge->status = StatusChallenge::init;
-            $challenge->save();
+            if (Auth::user()->hasAdminPermissions) {
+                $challenge->status = StatusChallenge::active;
+            } else {
+                $challenge->status = StatusChallenge::init;
+            }
 
+            $challenge->save();
             // save media
             $challenge->images()->saveMany($payload['images']);
             //save tags

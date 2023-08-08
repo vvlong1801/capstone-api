@@ -4,9 +4,9 @@ namespace App\Http\Controllers\WorkoutUser;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ChallengePhaseResource;
 
 use App\Http\Resources\MessageResource;
+use App\Http\Resources\WorkoutUser\ChallengePhaseResource;
 use App\Http\Resources\WorkoutUser\PlanResource;
 
 use App\Services\Interfaces\ChallengeServiceInterface;

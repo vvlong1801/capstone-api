@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CertificateIssuerResource extends JsonResource
+class GoalResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,10 +17,8 @@ class CertificateIssuerResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'description' => $this->description,
-            'example' => new MediaResource($this->whenLoaded('exampleCertificate')),
-            'status' => $this->status->name,
-            'created_at' => \Carbon\Carbon::parse($this->created_at)->format("d/m/Y"),
+            'created_at' => \Carbon\Carbon::parse($this->created_at)->format('d/m/Y'),
+            'tags' => TagResource::collection($this->whenLoaded('tags'))
         ];
     }
 }

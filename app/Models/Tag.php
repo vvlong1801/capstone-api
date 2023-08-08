@@ -11,6 +11,7 @@ use Illuminate\Support\Arr;
 class Tag extends Model
 {
     use HasFactory;
+    protected $guarded = [];
 
     protected $casts = [
         'type' => TypeTag::class,
@@ -20,19 +21,19 @@ class Tag extends Model
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
+
     public function scopeCreateOrIgnore(
         Builder $query,
         TypeTag $type,
         array $data
     ) {
-        $tags = Arr::map($data, function ($item) use ($type, $data) {
+        $tags = Arr::map($data, function ($item) use ($type) {
             $item['type'] = $type->value;
             $item['created_by'] = request()->user()->id;
             return $item;
         });
 
         $query->insertOrIgnore($tags);
-
         $result = $query->select('id')
             ->whereIn('name', \Arr::pluck($data, 'name'))->get()
             ->pluck('id')->toArray();

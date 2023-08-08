@@ -33,6 +33,15 @@ trait Helper
         return false;
     }
 
+    public static function fromNameToEnum($name)
+    {
+        foreach (self::cases() as $case) {
+            if ($case->name === $name) return $case;
+        }
+
+        throw \Exception("not existed");
+    }
+
     public static function toOptions()
     {
         return \Arr::pluck(self::cases(), 'name', 'name');

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\EquipmentController;
 use App\Http\Controllers\Admin\ExerciseController;
 use App\Http\Controllers\Admin\MuscleController;
+use App\Http\Controllers\Admin\sources\TagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Creator\AnalysisController;
 use App\Http\Controllers\Creator\AuthController;
@@ -37,6 +38,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=============== Equipments ===============
     Route::apiResource('/equipments', EquipmentController::class)->only('index');
+
+    //=============== Tags ===============
+    Route::get('/tags/exercises', [TagController::class, 'getExerciseTags']);
+    Route::get('/tags/challenges', [TagController::class, 'getChallengeTags']);
+    // Route::apiResource('/tags', TagController::class);
 
     //=============== Challenge Member ===============
     Route::get('/challenge-members/{memberId}/approve', [ChallengeMemberController::class, 'approve']);

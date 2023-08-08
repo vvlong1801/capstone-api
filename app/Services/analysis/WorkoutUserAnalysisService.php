@@ -16,7 +16,7 @@ class WorkoutUserAnalysisService extends BaseService implements WorkoutUserAnaly
     public function trackWorkoutDay($workoutUser)
     {
         $planIds = Plan::where('user_id', $workoutUser->id)->pluck('id');
-        return SessionResult::select('created_at')->where('plan_id', $planIds)->distinct()->pluck('created_at');
+        return SessionResult::select("created_at")->whereIn('plan_id', $planIds->toArray())->distinct()->pluck('created_at');
     }
 
     public function getTotalCalBurnedGroupByDay($workoutUser)
@@ -24,7 +24,7 @@ class WorkoutUserAnalysisService extends BaseService implements WorkoutUserAnaly
         $planIds = Plan::where('user_id', $workoutUser->id)->pluck('id');
         $calInDay = SessionResult::selectRaw('DATE_FORMAT(created_at, "%d-%m-%Y") AS day, SUM(calories_burned) AS cal_sum')
             ->whereBetween('created_at', [\Carbon\Carbon::today()->subDays(7), \Carbon\Carbon::tomorrow()])
-            ->whereIn('plan_id', $planIds)->groupBy('day')->orderBy('day')->get();
+            ->whereIn('plan_id', $planIds->toArray())->groupBy('day')->orderBy('day')->get();
         return Collection::times(7, function ($index) use ($calInDay) {
             $date = \Carbon\Carbon::tomorrow()->subDays($index)->format('d-m-Y');
             $calSum = $calInDay->where(function ($item) use ($date) {
@@ -39,7 +39,7 @@ class WorkoutUserAnalysisService extends BaseService implements WorkoutUserAnaly
         $planIds = Plan::where('user_id', $workoutUser->id)->pluck('id');
         $timeInday = SessionResult::selectRaw('DATE_FORMAT(created_at, "%d-%m-%Y") AS day, duration')
             ->whereBetween('created_at', [\Carbon\Carbon::today()->subDays(7), \Carbon\Carbon::tomorrow()])
-            ->whereIn('plan_id', $planIds)->get()->groupBy('day')->map(function ($group) {
+            ->whereIn('plan_id', $planIds->toArray())->get()->groupBy('day')->map(function ($group) {
                 $totalDuration = $group->sum(function ($item) {
                     return strtotime($item['duration']) - strtotime('00:00:00');
                 });
@@ -50,7 +50,7 @@ class WorkoutUserAnalysisService extends BaseService implements WorkoutUserAnaly
             });
         return Collection::times(7, function ($index) use ($timeInday) {
             $date = \Carbon\Carbon::tomorrow()->subDays($index)->format('d-m-Y');
-            $timeSum = \Arr::get($timeInday->toArray(), $date.".total_duration", "00:00:00");
+            $timeSum = \Arr::get($timeInday->toArray(), $date . ".total_duration", "00:00:00");
             return ['day' => \Carbon\Carbon::parse($date)->dayOfWeek, 'total_duration' => $timeSum];
         })->reverse()->values();
     }
@@ -59,7 +59,7 @@ class WorkoutUserAnalysisService extends BaseService implements WorkoutUserAnaly
     {
         $planIds = Plan::where('user_id', $workoutUser->id)->pluck('id');
         $totalTime = SessionResult::selectRaw('duration')
-            ->where('plan_id', $planIds)->get()->sum(function ($item) {
+            ->whereIn('plan_id', $planIds->toArray())->get()->sum(function ($item) {
                 return strtotime($item['duration']) - strtotime('00:00:00');
             });
         return CarbonInterval::seconds($totalTime)->cascade()->format('%H:%I:%S');
@@ -68,7 +68,7 @@ class WorkoutUserAnalysisService extends BaseService implements WorkoutUserAnaly
     public function countSession($workoutUser)
     {
         $planIds = Plan::where('user_id', $workoutUser->id)->pluck('id');
-        return SessionResult::whereIn('plan_id', $planIds)->count();
+        return SessionResult::whereIn('plan_id', $planIds->toArray())->count();
     }
     public function countChallenge($workoutUser)
     {

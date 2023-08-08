@@ -21,7 +21,8 @@ class ChallengeMemberResource extends JsonResource
             'email' => $this->email,
             'age' => $this->workoutUser->age,
             'gender' => $this->workoutUser->gender->name,
-            'join_at' => $this->pivot_created_at,
+            'join_at' => \Carbon\Carbon::parse($this->whenNotNull($this->pivot->created_at))->format('d-m-Y'),
+            'challenge_member_id' => $this->whenNotNull($this->pivot->id),
         ];
     }
 }
