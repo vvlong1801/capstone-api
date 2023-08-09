@@ -34,7 +34,7 @@ class MediaController extends Controller
         try {
             $media = $this->mediaService->createMedia($request->all(), MediaCollection::Exercise);
 
-            dd($media);
+            // dd($media);
         } catch (\Throwable $th) {
             throw $th;
         }
