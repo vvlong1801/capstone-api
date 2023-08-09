@@ -10,8 +10,8 @@ class AppServiceProvider extends ServiceProvider
     protected $bindingServices = [
         Services\Interfaces\UserServiceInterface::class => Services\UserService::class,
         Services\Interfaces\AuthServiceInterface::class => Services\AuthService::class,
-        // Services\Interfaces\MediaServiceInterface::class => Services\MediaServices\LocalService::class,
-        Services\Interfaces\MediaServiceInterface::class => Services\MediaServices\S3Service::class,
+        Services\Interfaces\MediaServiceInterface::class => Services\MediaServices\LocalService::class,
+        // Services\Interfaces\MediaServiceInterface::class => Services\MediaServices\S3Service::class,
         Services\Interfaces\MuscleServiceInterface::class => Services\MuscleService::class,
         Services\Interfaces\EquipmentServiceInterface::class => Services\EquipmentService::class,
         Services\Interfaces\ExerciseServiceInterface::class => Services\ExerciseService::class,
