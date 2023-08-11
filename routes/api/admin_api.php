@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\sources\CertificateIssuerController;
 use App\Http\Controllers\Admin\sources\GoalController;
 use App\Http\Controllers\Admin\sources\TagController;
+use App\Http\Controllers\Admin\WorkoutUserController;
 // use App\Http\Controllers\Creator\ChallengeController;
 use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;
@@ -54,6 +55,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/challenges/{id}/confirm', [ChallengeController::class, 'confirmNewChallenge']);
     Route::put('/challenges/{id}/invitation', [ChallengeController::class, 'updateInvitation']);
     Route::apiResource('/challenges', ChallengeController::class);
+
+    //=============== Workout users ===============
+    Route::apiResource('/workout-users', WorkoutUserController::class);
 
     //=============== Tags ===============
     Route::get('/tags/exercises', [TagController::class, 'getExerciseTags']);
